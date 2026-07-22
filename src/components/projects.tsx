@@ -1,8 +1,13 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
 import { projects } from "@/content/projects";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeading } from "@/components/section-heading";
 
 export function Projects() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section
       id="projects"
@@ -10,12 +15,19 @@ export function Projects() {
       className="scroll-mt-24 border-t border-border"
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 sm:py-28">
-        <SectionHeading
-          eyebrow="Featured projects"
-          id="projects-heading"
-          title="Things I'm building and experimenting with"
-          description="Side projects exploring history, games, recommendations, and the edges of AI-assisted product ideas."
-        />
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <SectionHeading
+            eyebrow="Featured projects"
+            id="projects-heading"
+            title="Things I'm building and experimenting with"
+            description="Side projects exploring history, games, recommendations, and the edges of AI-assisted product ideas."
+          />
+        </motion.div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (

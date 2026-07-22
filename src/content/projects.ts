@@ -8,8 +8,8 @@ export type Project = {
   url?: string;
   status: ProjectStatus;
   accent: string;
-  /** Soft wash used for placeholder imagery */
-  visual: string;
+  image: string;
+  imageAlt: string;
 };
 
 export const projects: Project[] = [
@@ -22,8 +22,9 @@ export const projects: Project[] = [
     url: "https://bears4life-utsf.github.io/TimeFrame/",
     status: "live",
     accent: "#4a6d8c",
-    visual:
-      "linear-gradient(145deg, #e8eef3 0%, #d5e0ea 45%, #c9d6e3 100%)",
+    image: "/images/projects/timeframe.jpg",
+    imageAlt:
+      "TimeFrame homepage with a year input set to 1776 and a Travel button on a dark navy background",
   },
   {
     id: "pokescout",
@@ -34,8 +35,9 @@ export const projects: Project[] = [
     url: "https://bears4life-utsf.github.io/pokescout/",
     status: "live",
     accent: "#b08d3e",
-    visual:
-      "linear-gradient(150deg, #f3eee3 0%, #e8dcc4 50%, #ddcfae 100%)",
+    image: "/images/projects/pokescout.jpg",
+    imageAlt:
+      "PokeScout search results for Pikachu showing the Pokémon portrait and type details",
   },
   {
     id: "closetcast",
@@ -46,7 +48,8 @@ export const projects: Project[] = [
     url: "https://bears4life-utsf.github.io/ClosetCast/",
     status: "live",
     accent: "#3d5a4c",
-    visual:
-      "linear-gradient(155deg, #e7efe9 0%, #d4e2d8 50%, #c5d6cb 100%)",
+    image: "/images/projects/closetcast.jpg",
+    imageAlt:
+      "ClosetCast welcome screen with name and location setup over a soft outfit-planning interface",
   },
 ];

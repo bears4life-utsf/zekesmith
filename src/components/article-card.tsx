@@ -12,11 +12,11 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      className="group overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-hover"
+      className="group overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-foreground/12 hover:shadow-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-[#efeee9]">
         <div
-          className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+          className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           style={{ background: article.visual }}
           aria-hidden="true"
         />

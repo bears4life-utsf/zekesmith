@@ -58,13 +58,13 @@ export function Hero() {
           >
             <a
               href="#projects"
-              className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 ease-out hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               See what I&apos;m building
             </a>
             <a
               href="#writing"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background-elevated px-5 text-sm font-medium text-foreground shadow-soft transition-colors hover:border-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background-elevated px-5 text-sm font-medium text-foreground shadow-soft transition-[border-color,background-color] duration-300 ease-out hover:border-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Read the writing
             </a>

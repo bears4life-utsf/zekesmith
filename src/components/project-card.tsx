@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Project } from "@/content/projects";
 
@@ -8,23 +9,20 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
   const isLive = project.status === "live" && Boolean(project.url);
 
   const card = (
-    <div className="overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 group-hover:-translate-y-0.5 group-hover:border-foreground/15 group-hover:shadow-hover">
+    <div className="overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:border-foreground/12 group-hover:shadow-hover motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
       <div className="relative aspect-[16/10] overflow-hidden border-b border-border bg-[#efeee9]">
-        <div
-          className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-          style={{ background: project.visual }}
-          aria-hidden="true"
+        <Image
+          src={project.image}
+          alt={project.imageAlt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          priority={index === 0}
         />
         <div className="absolute left-4 top-4">
-          <span className="inline-flex rounded-full border border-border bg-background-elevated/90 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-muted shadow-soft backdrop-blur-sm">
+          <span className="inline-flex rounded-full border border-border bg-background-elevated/92 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-muted shadow-soft backdrop-blur-sm">
             {project.status === "live" ? "Live" : "Coming soon"}
           </span>
-        </div>
-        <div className="absolute bottom-4 left-4 right-4">
-          <div
-            className="h-px w-12 opacity-70"
-            style={{ backgroundColor: project.accent }}
-          />
         </div>
       </div>
 
@@ -41,7 +39,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
           {isLive ? (
             <span
               aria-hidden="true"
-              className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-colors group-hover:border-foreground/25 group-hover:text-foreground"
+              className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-foreground/25 group-hover:text-foreground motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -62,10 +60,10 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 
   return (
     <motion.article
-      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
     >
       {isLive ? (
         <a
