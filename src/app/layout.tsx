@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   authors: [{ name: site.name }],
   creator: site.name,
   keywords: [
-    "Zeke Smith",
+    "Zeke S. Smith",
     "product management",
     "AI",
     "software",

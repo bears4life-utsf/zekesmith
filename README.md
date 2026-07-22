@@ -1,4 +1,4 @@
-# Zeke Smith
+# Zeke S. Smith
 
 Personal site — a hub for projects, ideas, and writing. Built with Next.js, TypeScript, and Tailwind CSS.
 

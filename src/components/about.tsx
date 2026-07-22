@@ -26,7 +26,7 @@ export function About() {
             <div className="relative mx-auto aspect-[4/5] w-40 shrink-0 overflow-hidden rounded-2xl border border-border bg-[#efeee9] shadow-soft sm:mx-0 sm:w-44 lg:w-48">
               <Image
                 src="/images/zeke-headshot.jpg"
-                alt="Professional portrait of Zeke Smith"
+                alt="Professional portrait of Zeke S. Smith"
                 fill
                 sizes="(max-width: 640px) 160px, 192px"
                 className="object-cover object-top"
