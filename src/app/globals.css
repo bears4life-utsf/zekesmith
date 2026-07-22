@@ -3,31 +3,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f4f5f7;
+  --background: #f8f8f5;
   --background-elevated: #ffffff;
-  --foreground: #111318;
-  --muted: #5c6570;
-  --border: rgba(17, 19, 24, 0.1);
-  --accent: #0d9488;
-  --accent-soft: rgba(13, 148, 136, 0.12);
-  --glow: rgba(13, 148, 136, 0.18);
-  --nav-bg: rgba(244, 245, 247, 0.72);
-  --hero-grid: rgba(17, 19, 24, 0.06);
-  --card-shine: rgba(255, 255, 255, 0.65);
+  --foreground: #1a1a1a;
+  --muted: #5e5e5a;
+  --border: rgba(26, 26, 26, 0.1);
+  --accent: #3d5a4c;
+  --accent-soft: rgba(61, 90, 76, 0.1);
+  --nav-bg: rgba(248, 248, 245, 0.82);
+  --hero-grid: rgba(26, 26, 26, 0.045);
+  --shadow-soft: 0 1px 2px rgba(26, 26, 26, 0.04), 0 12px 32px -16px rgba(26, 26, 26, 0.12);
+  --shadow-hover: 0 1px 2px rgba(26, 26, 26, 0.05), 0 18px 40px -18px rgba(26, 26, 26, 0.18);
 }
 
 .dark {
-  --background: #07080a;
-  --background-elevated: #0e1014;
-  --foreground: #f3f4f6;
-  --muted: #9aa3ad;
-  --border: rgba(243, 244, 246, 0.1);
-  --accent: #2dd4bf;
-  --accent-soft: rgba(45, 212, 191, 0.12);
-  --glow: rgba(45, 212, 191, 0.16);
-  --nav-bg: rgba(7, 8, 10, 0.7);
-  --hero-grid: rgba(243, 244, 246, 0.045);
-  --card-shine: rgba(255, 255, 255, 0.04);
+  --background: #161616;
+  --background-elevated: #1f1f1f;
+  --foreground: #f2f2ef;
+  --muted: #a8a8a2;
+  --border: rgba(242, 242, 239, 0.12);
+  --accent: #8fafa0;
+  --accent-soft: rgba(143, 175, 160, 0.14);
+  --nav-bg: rgba(22, 22, 22, 0.82);
+  --hero-grid: rgba(242, 242, 239, 0.04);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -16px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 40px -18px rgba(0, 0, 0, 0.55);
 }
 
 @theme inline {
@@ -38,10 +38,11 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --color-glow: var(--glow);
   --color-nav-bg: var(--nav-bg);
   --font-sans: var(--font-instrument-sans);
   --font-serif: var(--font-instrument-serif);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-hover: var(--shadow-hover);
 }
 
 html {
@@ -53,6 +54,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -62,62 +64,25 @@ body {
 
 .hero-atmosphere {
   background:
-    radial-gradient(ellipse 80% 55% at 70% -10%, var(--glow), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 10% 20%, rgba(56, 189, 248, 0.08), transparent 50%),
-    linear-gradient(180deg, transparent 0%, var(--background) 100%);
+    linear-gradient(180deg, #f3f2ed 0%, #f8f8f5 42%, #f8f8f5 100%);
 }
 
 .dark .hero-atmosphere {
   background:
-    radial-gradient(ellipse 80% 55% at 72% -8%, rgba(45, 212, 191, 0.14), transparent 55%),
-    radial-gradient(ellipse 45% 35% at 8% 25%, rgba(56, 189, 248, 0.1), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(14, 165, 233, 0.05), transparent 60%),
-    linear-gradient(180deg, #07080a 0%, #07080a 100%);
+    linear-gradient(180deg, #1a1a1a 0%, #161616 55%, #161616 100%);
 }
 
 .hero-grid {
   background-image:
     linear-gradient(to right, var(--hero-grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--hero-grid) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
-}
-
-@keyframes float-soft {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.02);
-  }
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.animate-float-soft {
-  animation: float-soft 9s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 5s ease-in-out infinite;
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, black 0%, transparent 78%);
+  opacity: 0.7;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  .animate-float-soft,
-  .animate-pulse-glow {
-    animation: none;
   }
 }

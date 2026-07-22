@@ -1,18 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { site } from "@/content/site";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-export function Header() {
-  const [scrolled, setScrolled] = useState(false);
+function subscribeScroll(onStoreChange: () => void) {
+  window.addEventListener("scroll", onStoreChange, { passive: true });
+  return () => window.removeEventListener("scroll", onStoreChange);
+}
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+function getScrolled() {
+  return window.scrollY > 12;
+}
+
+function getScrolledServer() {
+  return false;
+}
+
+export function Header() {
+  const scrolled = useSyncExternalStore(subscribeScroll, getScrolled, getScrolledServer);
 
   return (
     <header

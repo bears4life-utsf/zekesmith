@@ -8,7 +8,7 @@ export type Project = {
   url?: string;
   status: ProjectStatus;
   accent: string;
-  /** CSS gradient used for placeholder screenshots */
+  /** Soft wash used for placeholder imagery */
   visual: string;
 };
 
@@ -21,9 +21,9 @@ export const projects: Project[] = [
     category: "History / Learning",
     url: "https://bears4life-utsf.github.io/TimeFrame/",
     status: "live",
-    accent: "#38bdf8",
+    accent: "#4a6d8c",
     visual:
-      "radial-gradient(ellipse at 20% 20%, rgba(56,189,248,0.45), transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(14,165,233,0.25), transparent 50%), linear-gradient(145deg, #0c1929 0%, #132033 50%, #0a121c 100%)",
+      "linear-gradient(145deg, #e8eef3 0%, #d5e0ea 45%, #c9d6e3 100%)",
   },
   {
     id: "pokescout",
@@ -33,9 +33,9 @@ export const projects: Project[] = [
     category: "Gaming / Side Project",
     url: "https://bears4life-utsf.github.io/pokescout/",
     status: "live",
-    accent: "#fbbf24",
+    accent: "#b08d3e",
     visual:
-      "radial-gradient(ellipse at 30% 10%, rgba(251,191,36,0.4), transparent 50%), radial-gradient(ellipse at 70% 90%, rgba(239,68,68,0.28), transparent 45%), linear-gradient(160deg, #1a1208 0%, #24180c 45%, #0f0c08 100%)",
+      "linear-gradient(150deg, #f3eee3 0%, #e8dcc4 50%, #ddcfae 100%)",
   },
   {
     id: "closetcast",
@@ -45,8 +45,8 @@ export const projects: Project[] = [
     category: "Lifestyle / AI Experiment",
     url: "https://bears4life-utsf.github.io/ClosetCast/",
     status: "live",
-    accent: "#2dd4bf",
+    accent: "#3d5a4c",
     visual:
-      "radial-gradient(ellipse at 15% 30%, rgba(45,212,191,0.35), transparent 55%), radial-gradient(ellipse at 85% 70%, rgba(99,102,241,0.2), transparent 50%), linear-gradient(150deg, #0a1614 0%, #10201c 50%, #081210 100%)",
+      "linear-gradient(155deg, #e7efe9 0%, #d4e2d8 50%, #c5d6cb 100%)",
   },
 ];

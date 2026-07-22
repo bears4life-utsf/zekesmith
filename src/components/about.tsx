@@ -37,7 +37,7 @@ export function About() {
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-3xl border border-border bg-background-elevated p-7 sm:p-8"
+            className="rounded-3xl border border-border bg-background-elevated p-7 shadow-soft sm:p-8"
           >
             <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-accent">
               Current interests
