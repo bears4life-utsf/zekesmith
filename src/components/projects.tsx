@@ -11,10 +11,10 @@ export function Projects() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 sm:py-28">
         <SectionHeading
-          eyebrow="Projects"
+          eyebrow="Featured projects"
           id="projects-heading"
           title="Things I'm building and experimenting with"
-          description="Side projects and prototypes — history tools, games, AI experiments, and ideas still taking shape."
+          description="Side projects exploring history, games, recommendations, and the edges of AI-assisted product ideas."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

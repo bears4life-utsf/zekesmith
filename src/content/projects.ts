@@ -49,26 +49,4 @@ export const projects: Project[] = [
     visual:
       "radial-gradient(ellipse at 15% 30%, rgba(45,212,191,0.35), transparent 55%), radial-gradient(ellipse at 85% 70%, rgba(99,102,241,0.2), transparent 50%), linear-gradient(150deg, #0a1614 0%, #10201c 50%, #081210 100%)",
   },
-  {
-    id: "ai-experiments",
-    title: "AI experiments",
-    description:
-      "A growing set of prototypes exploring agents, copilots, and new interfaces for building software.",
-    category: "Coming soon",
-    status: "coming-soon",
-    accent: "#94a3b8",
-    visual:
-      "radial-gradient(ellipse at 40% 40%, rgba(148,163,184,0.22), transparent 60%), linear-gradient(160deg, #111114 0%, #18181b 100%)",
-  },
-  {
-    id: "product-ideas",
-    title: "Product ideas",
-    description:
-      "Early concepts and notes on tools that help product teams move faster with clearer intent.",
-    category: "Coming soon",
-    status: "coming-soon",
-    accent: "#94a3b8",
-    visual:
-      "radial-gradient(ellipse at 60% 30%, rgba(148,163,184,0.18), transparent 55%), linear-gradient(140deg, #101012 0%, #16161a 100%)",
-  },
 ];

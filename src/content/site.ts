@@ -2,7 +2,7 @@ export const site = {
   name: "Zeke Smith",
   title: "Zeke Smith — Building products, exploring AI",
   description:
-    "Vice President of Product exploring AI, product strategy, software development, and the future of modern product teams.",
+    "Vice President of Product with nearly three decades of experience leading software teams, modernizing complex products, and writing about product, engineering, UX, and AI.",
   url: "https://zekesmith.com",
   email: "hello@zekesmith.com",
   nav: [
@@ -12,12 +12,12 @@ export const site = {
   ],
   hero: {
     headline:
-      "Building products, exploring AI, and rethinking how software gets made.",
+      "Building products, exploring AI, and writing about the future of software.",
     supporting:
-      "Vice President of Product with nearly three decades of experience building software for complex industries. Today I'm focused on AI, product strategy, software development, and the future of modern product teams.",
+      "Vice President of Product with nearly three decades of experience leading software teams, modernizing complex products, building side projects, and writing about product, engineering, UX, AI, and software development.",
   },
   about: {
-    bio: "Zeke Smith is a Vice President of Product with nearly 30 years of experience building software products in the insurance and property-estimating industry. He leads large cross-functional teams spanning product management, engineering, and user experience. Outside of work, he enjoys exploring AI, building side projects, writing about product strategy, and thinking about how software teams evolve.",
+    bio: "Zeke Smith is a Vice President of Product who has spent nearly three decades leading software strategy, product teams, and cross-functional delivery. His work sits at the intersection of product leadership, UX, engineering collaboration, and AI — with a focus on building modern software products that feel clear, useful, and inevitable.",
     interests: [
       "AI-assisted software development",
       "Product operating models",

@@ -14,7 +14,7 @@ export function Writing() {
           eyebrow="Writing"
           id="writing-heading"
           title="Notes on product, AI, and how software gets made"
-          description="Drafts and essays in progress — the centerpiece of this site over time. No full articles yet; just the questions I'm wrestling with."
+          description="Essays and drafts on operating models, AI, and the converging craft of product and engineering."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

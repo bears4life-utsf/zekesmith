@@ -11,75 +11,58 @@ export type Article = {
 
 export const articles: Article[] = [
   {
-    id: "product-operating-models-after-safe",
-    title: "Product operating models after SAFe",
+    id: "beyond-safe",
+    title: "Why product teams are moving beyond SAFe",
     teaser:
-      "How modern product organizations are shifting from large-scale planning frameworks toward empowered teams and outcome-driven execution.",
+      "Large-scale planning frameworks promised alignment. Many teams are discovering that speed, clarity, and ownership come from a different operating model.",
     readingTime: "8 min",
     category: "Product strategy",
     accent: "#38bdf8",
-    visual:
-      "linear-gradient(135deg, #0c1929 0%, #1e3a5f 40%, #0a1628 100%)",
+    visual: "linear-gradient(135deg, #0c1929 0%, #1e3a5f 40%, #0a1628 100%)",
     status: "draft",
   },
   {
-    id: "product-engineering-line-disappearing",
-    title: "The line between product and engineering is disappearing",
+    id: "product-operating-model",
+    title: "The product operating model actually works",
     teaser:
-      "Why AI and modern tooling are creating tighter collaboration between product managers and developers.",
+      "What changes when teams organize around outcomes, empowered decision-making, and continuous discovery instead of ceremony and handoffs.",
     readingTime: "7 min",
-    category: "Teams",
+    category: "Organizations",
     accent: "#2dd4bf",
-    visual:
-      "linear-gradient(145deg, #0a1614 0%, #134e4a 45%, #08201c 100%)",
+    visual: "linear-gradient(145deg, #0a1614 0%, #134e4a 45%, #08201c 100%)",
     status: "draft",
   },
   {
-    id: "why-ai-excites-me",
-    title: "Why AI excites me as a software builder",
+    id: "ai-changing-software-development",
+    title: "How AI is changing software development",
     teaser:
-      "How AI changes the economics of software creation and enables individuals to build products that once required entire teams.",
+      "AI is rewriting the economics of building software — shrinking the distance between idea, prototype, and shipped product.",
     readingTime: "6 min",
     category: "AI",
     accent: "#a3e635",
-    visual:
-      "linear-gradient(150deg, #0f1a0a 0%, #365314 42%, #0c1408 100%)",
+    visual: "linear-gradient(150deg, #0f1a0a 0%, #365314 42%, #0c1408 100%)",
     status: "draft",
   },
   {
-    id: "product-managers-need-technical-curiosity",
-    title: "Product managers need technical curiosity",
+    id: "product-engineering-converging",
+    title: "Why product and engineering are converging",
     teaser:
-      "Why understanding systems, APIs, data, and software architecture matters more than ever.",
+      "Modern tooling and AI are collapsing the old walls between product managers and developers — and that changes how great software gets made.",
     readingTime: "7 min",
-    category: "Craft",
+    category: "Teams",
     accent: "#fbbf24",
-    visual:
-      "linear-gradient(140deg, #1a1408 0%, #854d0e 40%, #120e06 100%)",
+    visual: "linear-gradient(140deg, #1a1408 0%, #854d0e 40%, #120e06 100%)",
     status: "draft",
   },
   {
-    id: "hidden-cost-of-organizational-complexity",
-    title: "The hidden cost of organizational complexity",
+    id: "building-without-being-an-engineer",
+    title: "Building software without being an engineer",
     teaser:
-      "How process, governance, and handoffs silently slow product organizations.",
-    readingTime: "9 min",
-    category: "Organizations",
+      "What it means to stay deeply involved in crafting products when you lead through product, design, and systems thinking rather than production code.",
+    readingTime: "6 min",
+    category: "Craft",
     accent: "#fb7185",
-    visual:
-      "linear-gradient(135deg, #1a0c10 0%, #9f1239 38%, #12080c 100%)",
-    status: "draft",
-  },
-  {
-    id: "great-software-feels-inevitable",
-    title: "Great software feels inevitable",
-    teaser:
-      "Thoughts on UX, simplicity, and why the best products remove friction rather than add features.",
-    readingTime: "5 min",
-    category: "UX",
-    accent: "#c4b5fd",
-    visual:
-      "linear-gradient(145deg, #120c1a 0%, #5b21b6 40%, #0c0814 100%)",
+    visual: "linear-gradient(135deg, #1a0c10 0%, #9f1239 38%, #12080c 100%)",
     status: "draft",
   },
 ];
