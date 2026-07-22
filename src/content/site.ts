@@ -3,7 +3,7 @@ export const site = {
   title: "Zeke Smith — Building products, exploring AI",
   description:
     "Vice President of Product with nearly three decades of experience leading software teams, modernizing complex products, and writing about product, engineering, UX, and AI.",
-  url: "https://zekesmith.com",
+  url: "https://zekesmith.dev",
   email: "hello@zekesmith.com",
   nav: [
     { label: "Projects", href: "#projects" },
