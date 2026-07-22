@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f4f5f7;
+  --background-elevated: #ffffff;
+  --foreground: #111318;
+  --muted: #5c6570;
+  --border: rgba(17, 19, 24, 0.1);
+  --accent: #0d9488;
+  --accent-soft: rgba(13, 148, 136, 0.12);
+  --glow: rgba(13, 148, 136, 0.18);
+  --nav-bg: rgba(244, 245, 247, 0.72);
+  --hero-grid: rgba(17, 19, 24, 0.06);
+  --card-shine: rgba(255, 255, 255, 0.65);
+}
+
+.dark {
+  --background: #07080a;
+  --background-elevated: #0e1014;
+  --foreground: #f3f4f6;
+  --muted: #9aa3ad;
+  --border: rgba(243, 244, 246, 0.1);
+  --accent: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+  --glow: rgba(45, 212, 191, 0.16);
+  --nav-bg: rgba(7, 8, 10, 0.7);
+  --hero-grid: rgba(243, 244, 246, 0.045);
+  --card-shine: rgba(255, 255, 255, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-glow: var(--glow);
+  --color-nav-bg: var(--nav-bg);
+  --font-sans: var(--font-instrument-sans);
+  --font-serif: var(--font-instrument-serif);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--foreground);
+}
+
+.hero-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 55% at 70% -10%, var(--glow), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 10% 20%, rgba(56, 189, 248, 0.08), transparent 50%),
+    linear-gradient(180deg, transparent 0%, var(--background) 100%);
+}
+
+.dark .hero-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 55% at 72% -8%, rgba(45, 212, 191, 0.14), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 8% 25%, rgba(56, 189, 248, 0.1), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(14, 165, 233, 0.05), transparent 60%),
+    linear-gradient(180deg, #07080a 0%, #07080a 100%);
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, var(--hero-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--hero-grid) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-float-soft {
+  animation: float-soft 9s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-float-soft,
+  .animate-pulse-glow {
+    animation: none;
+  }
+}
