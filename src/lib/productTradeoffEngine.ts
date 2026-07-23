@@ -45,16 +45,13 @@ export type SliderDefinition = {
 };
 
 export type PresetId =
-  | "startup"
-  | "enterprisePlatform"
+  | "growthAtScale"
+  | "enterpriseCoordination"
+  | "empoweredProductTeams"
   | "aiTransformation"
   | "platformModernization"
-  | "technicalDebtReduction"
-  | "growthAtScale"
-  | "regulatedEnterprise"
   | "customerExpansion"
-  | "enterpriseCoordination"
-  | "empoweredProductTeams";
+  | "regulatedEnterprise";
 
 export type PresetTint =
   | "amber"
@@ -68,16 +65,16 @@ export type PresetTint =
 
 export type Preset = {
   id: PresetId;
-  /** URL slug for shareable scenario links */
+  /** URL slug for shareable challenge links (`?scenario=` query param) */
   slug: string;
   label: string;
   /** One-line chip hint */
   blurb: string;
-  /** Miniature case study — why these tradeoffs exist */
+  /** Miniature case study — why these tradeoffs exist for this challenge */
   explanation: string;
   tint: PresetTint;
   inputs: SliderInputs;
-  /** Optional essay this scenario deep-links from */
+  /** Optional essay this challenge deep-links from */
   relatedEssayId?: string;
 };
 
@@ -221,92 +218,13 @@ export const DEFAULT_INPUTS: SliderInputs = {
 
 export const PRESETS: Preset[] = [
   {
-    id: "startup",
-    slug: "startup",
-    label: "Startup",
-    blurb: "Learn fast with a small team.",
-    explanation:
-      "Early-stage organizations usually trade polish and predictability for speed and learning. Scope stays narrow so a small team can discover what customers actually need before optimizing for scale.",
-    tint: "amber",
-    inputs: {
-      scope: 28,
-      deliverySpeed: 78,
-      qualityBar: 28,
-      teamSize: 22,
-      innovation: 72,
-    },
-  },
-  {
-    id: "enterprisePlatform",
-    slug: "enterprise-platform",
-    label: "Enterprise Platform",
-    blurb: "Breadth, reliability, and a high bar.",
-    explanation:
-      "Platform organizations often optimize for breadth and reliability because many teams depend on what they ship. The tradeoff is slower delivery: stability becomes more valuable than pace.",
-    tint: "navy",
-    inputs: {
-      scope: 78,
-      deliverySpeed: 38,
-      qualityBar: 82,
-      teamSize: 78,
-      innovation: 42,
-    },
-  },
-  {
-    id: "aiTransformation",
-    slug: "ai-transformation",
-    label: "AI Transformation",
-    blurb: "High novelty, fast learning loops.",
-    explanation:
-      "Organizations investing heavily in AI often accept greater uncertainty in exchange for faster learning and long-term differentiation. Confidence lags novelty until evidence catches up.",
-    tint: "teal",
-    inputs: {
-      scope: 36,
-      deliverySpeed: 70,
-      qualityBar: 40,
-      teamSize: 32,
-      innovation: 88,
-    },
-  },
-  {
-    id: "platformModernization",
-    slug: "platform-modernization",
-    label: "Platform Modernization",
-    blurb: "Health over feature theater.",
-    explanation:
-      "Modernization protects future velocity. Leaders keep scope intentionally tight so quality and architecture can improve—without dressing infrastructure work up as a customer-facing release.",
-    tint: "steel",
-    inputs: {
-      scope: 32,
-      deliverySpeed: 42,
-      qualityBar: 78,
-      teamSize: 52,
-      innovation: 48,
-    },
-  },
-  {
-    id: "technicalDebtReduction",
-    slug: "technical-debt-reduction",
-    label: "Technical Debt Reduction",
-    blurb: "Pay down the tax on future work.",
-    explanation:
-      "Debt reduction looks slow from the outside. Internally it is a deliberate trade: less visible scope now in exchange for lower stress and better predictability later.",
-    tint: "bronze",
-    inputs: {
-      scope: 30,
-      deliverySpeed: 35,
-      qualityBar: 80,
-      teamSize: 45,
-      innovation: 30,
-    },
-  },
-  {
     id: "growthAtScale",
     slug: "growth-at-scale",
-    label: "Growth at Scale",
-    blurb: "More customers, more surface area.",
+    label: "Scaling the Organization",
+    blurb:
+      "Growing teams, products, and dependencies while maintaining speed, alignment, and effective decision-making.",
     explanation:
-      "Growth stretches scope and team size together. Organizations that optimize only for capacity often discover that coordination and quality quietly become the real constraint.",
+      "As organizations grow, capacity and surface area expand together. The tradeoff is that coordination and decision latency often become the real constraint—speed and alignment compete unless ownership stays clear.",
     tint: "burgundy",
     inputs: {
       scope: 70,
@@ -317,44 +235,13 @@ export const PRESETS: Preset[] = [
     },
   },
   {
-    id: "regulatedEnterprise",
-    slug: "regulated-enterprise",
-    label: "Regulated Enterprise",
-    blurb: "Trust and compliance set the pace.",
-    explanation:
-      "In regulated contexts, quality and predictability are constraints rather than preferences. Innovation still matters, but it has to survive audit, risk review, and operational scrutiny.",
-    tint: "slate",
-    inputs: {
-      scope: 55,
-      deliverySpeed: 32,
-      qualityBar: 88,
-      teamSize: 65,
-      innovation: 35,
-    },
-  },
-  {
-    id: "customerExpansion",
-    slug: "customer-expansion",
-    label: "Customer Expansion",
-    blurb: "Protect a promise under pressure.",
-    explanation:
-      "A committed customer date often raises delivery speed and scope at once. Leaders who ignore the quality and capacity side of that trade usually meet it later in support queues.",
-    tint: "forest",
-    inputs: {
-      scope: 62,
-      deliverySpeed: 82,
-      qualityBar: 58,
-      teamSize: 48,
-      innovation: 30,
-    },
-  },
-  {
     id: "enterpriseCoordination",
     slug: "enterprise-coordination",
-    label: "Enterprise Coordination",
-    blurb: "Alignment tax at scale.",
+    label: "Coordinating Enterprise Delivery",
+    blurb:
+      "Aligning multiple teams, shared platforms, and complex dependencies without slowing execution.",
     explanation:
-      "Organizations with many teams often optimize for coordination and predictability. The tradeoff is that decision making can become slower as planning and governance increase.",
+      "Aligning many teams and shared platforms improves predictability. The tradeoff is that planning and governance can slow local decision-making and execution—coordination becomes valuable until it costs more than it returns.",
     tint: "navy",
     relatedEssayId: "beyond-safe",
     inputs: {
@@ -368,10 +255,11 @@ export const PRESETS: Preset[] = [
   {
     id: "empoweredProductTeams",
     slug: "empowered-product-teams",
-    label: "Empowered Product Teams",
-    blurb: "Outcomes over ceremony.",
+    label: "Building Product Teams",
+    blurb:
+      "Strengthening product, engineering, and design partnerships while increasing ownership, accountability, and customer focus.",
     explanation:
-      "Organizations prioritize local decision making, continuous discovery, and customer ownership while accepting less centralized control. Team size stays small enough that ownership remains real.",
+      "Strengthening product, engineering, and design partnerships increases ownership and customer focus. The tradeoff is less centralized control—and the need to trust teams with real decisions while keeping accountability clear.",
     tint: "forest",
     relatedEssayId: "product-operating-model",
     inputs: {
@@ -380,6 +268,74 @@ export const PRESETS: Preset[] = [
       qualityBar: 68,
       teamSize: 34,
       innovation: 62,
+    },
+  },
+  {
+    id: "aiTransformation",
+    slug: "ai-transformation",
+    label: "Adopting AI",
+    blurb:
+      "Integrating AI into products and ways of working while balancing innovation, governance, and organizational readiness.",
+    explanation:
+      "Integrating AI opens innovation and new ways of working. The tradeoff is balancing that upside with governance, readiness, and the uncertainty of unproven bets—confidence lags novelty until evidence catches up.",
+    tint: "teal",
+    inputs: {
+      scope: 36,
+      deliverySpeed: 70,
+      qualityBar: 40,
+      teamSize: 32,
+      innovation: 88,
+    },
+  },
+  {
+    id: "platformModernization",
+    slug: "platform-modernization",
+    label: "Modernizing Legacy Platforms",
+    blurb:
+      "Improving aging technology, reducing technical debt, and evolving architecture without disrupting customer delivery.",
+    explanation:
+      "Improving aging platforms and reducing debt protects future velocity. The tradeoff is less visible customer scope now so architecture can evolve—without dressing infrastructure work up as a customer-facing release.",
+    tint: "steel",
+    inputs: {
+      scope: 32,
+      deliverySpeed: 42,
+      qualityBar: 78,
+      teamSize: 52,
+      innovation: 48,
+    },
+  },
+  {
+    id: "customerExpansion",
+    slug: "customer-expansion",
+    label: "Growing the Business",
+    blurb:
+      "Expanding into new markets, customers, or products while maintaining focus, execution, and organizational alignment.",
+    explanation:
+      "Expanding into new markets or products stretches scope and ambition. The tradeoff is maintaining focus, execution quality, and organizational alignment while the surface area—and delivery pressure—grows.",
+    tint: "forest",
+    inputs: {
+      scope: 62,
+      deliverySpeed: 82,
+      qualityBar: 58,
+      teamSize: 48,
+      innovation: 30,
+    },
+  },
+  {
+    id: "regulatedEnterprise",
+    slug: "regulated-enterprise",
+    label: "Operating in a Regulated Environment",
+    blurb:
+      "Balancing compliance, governance, and risk management while preserving speed, innovation, and customer responsiveness.",
+    explanation:
+      "Compliance and risk management protect trust. The tradeoff is preserving enough speed, innovation, and customer responsiveness that governance does not become the product—quality and predictability are constraints, not preferences.",
+    tint: "slate",
+    inputs: {
+      scope: 55,
+      deliverySpeed: 32,
+      qualityBar: 88,
+      teamSize: 65,
+      innovation: 35,
     },
   },
 ];
@@ -829,11 +785,12 @@ export function getPresetByEssayId(essayId: string): Preset | undefined {
   return PRESETS.find((preset) => preset.relatedEssayId === essayId);
 }
 
-/** Build a shareable homepage URL for a scenario. */
+/** Build a shareable homepage URL for a leadership challenge (`?scenario=` kept for stable links). */
 export function scenarioHref(slug: string): string {
   return `/?scenario=${encodeURIComponent(slug)}#tradeoffs`;
 }
 
+/** Query param for deep-linking a challenge; name kept for existing share URLs. */
 export const SCENARIO_QUERY_PARAM = "scenario";
 
 export const PRINCIPLE_TINT_VAR: Record<PrincipleTint, string> = {

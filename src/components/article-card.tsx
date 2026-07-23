@@ -48,7 +48,7 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
 
         <div className="mt-5 border-t border-border/80 pt-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-accent/80">
-            Explore the related scenario
+            Explore the related challenge
           </p>
           <a
             href={scenarioLink}
