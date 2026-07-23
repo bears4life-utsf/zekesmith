@@ -8,12 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import type { CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   DEFAULT_INPUTS,
   PRESETS,
-  PRESET_TINT_VAR,
   PRINCIPLES,
   PRINCIPLE_TINT_VAR,
   SCENARIO_QUERY_PARAM,
@@ -21,13 +19,18 @@ import {
   computeOutputs,
   getPresetBySlug,
   getReflection,
-  matchPreset,
   type PresetId,
   type SliderId,
   type SliderInputs,
 } from "@/lib/productTradeoffEngine";
 import { SectionHeading } from "@/components/section-heading";
 import { useEnableMotion } from "@/lib/motion";
+
+/** Calm crossfade when the selected challenge reframes content below. */
+const CHALLENGE_FADE = {
+  duration: 0.2,
+  ease: [0.22, 1, 0.36, 1] as const,
+};
 
 function readChallengeInputsFromUrl(): SliderInputs | null {
   if (typeof window === "undefined") return null;
@@ -83,7 +86,6 @@ export function ProductTradeoffEngine() {
     () => getReflection(inputs, outputs, selectedChallengeId),
     [inputs, outputs, selectedChallengeId],
   );
-  const matchedPreset = useMemo(() => matchPreset(inputs), [inputs]);
   const selectedChallenge = useMemo(
     () =>
       selectedChallengeId
@@ -184,7 +186,7 @@ export function ProductTradeoffEngine() {
               tradeoffs. They&apos;re built by navigating them.
             </p>
 
-            <div className="mt-7 max-w-[40rem] space-y-4 text-pretty text-base leading-[1.7] text-muted sm:mt-8 sm:space-y-5 sm:text-[1.05rem] sm:leading-[1.75]">
+            <div className="mt-6 max-w-[40rem] space-y-3.5 text-pretty text-base leading-[1.7] text-muted sm:mt-7 sm:space-y-4 sm:text-[1.05rem] sm:leading-[1.75]">
               <p>
                 Every leadership decision changes something else. Increasing
                 delivery speed may reduce quality. Growing a team may increase
@@ -192,44 +194,43 @@ export function ProductTradeoffEngine() {
                 reduce predictability.
               </p>
               <p>
-                Experienced product leaders learn that every optimization
-                creates a new constraint. This interactive mental model explores
-                those relationships—not to provide answers, but to encourage
-                better questions.
+                This interactive model explores those relationships—not to
+                provide answers, but to encourage better questions.
               </p>
             </div>
 
-            <aside className="mt-8 max-w-2xl border-l-2 border-border pl-5 sm:mt-9 sm:pl-6">
+            <aside className="mt-6 max-w-2xl border-l-2 border-border pl-5 sm:mt-7 sm:pl-6">
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
                 A note on perspective
               </p>
-              <div className="mt-3 space-y-2.5 text-sm leading-relaxed text-muted/85">
-                <p>Every organization is different.</p>
+              <div className="mt-2.5 space-y-2 text-sm leading-relaxed text-muted/85">
                 <p>
-                  The relationships shown here are based on my experience
-                  leading software products and product organizations over
-                  nearly three decades. You may disagree with individual
-                  relationships—and that&apos;s part of the point. The value
-                  isn&apos;t finding the &ldquo;correct&rdquo; answer. It&apos;s
-                  exploring how changing one decision influences another.
+                  Every organization is different. These relationships reflect
+                  my experience leading software products and product
+                  organizations over nearly three decades.
+                </p>
+                <p>
+                  There isn&apos;t a single &ldquo;correct&rdquo; answer. The
+                  value comes from understanding how one leadership decision
+                  influences another.
                 </p>
               </div>
             </aside>
           </motion.div>
 
           <div className="mt-10 rounded-3xl border border-accent/20 bg-background-elevated p-5 shadow-soft sm:mt-12 sm:p-7 lg:p-8">
-            <div className="space-y-6 sm:space-y-7">
+            <div className="flex flex-col">
+              {/* 1 — Choose */}
               <div>
                 <h3 className="max-w-3xl text-pretty font-serif text-xl tracking-tight text-foreground sm:text-[1.35rem] sm:leading-snug">
                   What kind of leadership problem are you trying to solve?
                 </h3>
                 <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-muted sm:text-[0.95rem] sm:leading-relaxed">
-                  Select the challenge that best reflects your organization.
-                  We&apos;ll adapt the guidance to help you balance customer
-                  outcomes, coordination, and decision-making.
+                  Select the challenge that best reflects your organization. Then
+                  adjust the decisions below to see how the tradeoffs change.
                 </p>
                 <div
-                  className="mt-5 flex flex-wrap gap-2 sm:gap-2.5"
+                  className="mt-5 flex flex-wrap gap-2 sm:mt-6 sm:gap-2.5"
                   role="group"
                   aria-label="Leadership challenges"
                 >
@@ -243,255 +244,276 @@ export function ProductTradeoffEngine() {
                         title={preset.blurb}
                         aria-pressed={selected}
                         data-selected={selected}
-                        className="preset-chip rounded-full border px-3.5 py-2 text-[0.8125rem] leading-snug sm:px-4 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                        style={
-                          {
-                            "--preset-tint": PRESET_TINT_VAR[preset.tint],
-                          } as CSSProperties
-                        }
+                        className="preset-chip min-h-10 rounded-full border px-3.5 py-2 text-[0.8125rem] leading-snug sm:px-4 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                       >
                         {preset.label}
                       </button>
                     );
                   })}
                 </div>
+              </div>
 
+              {/* 2–5 — Context → Engine → Recommendations → Reflection */}
+              <div
+                className="challenge-lens mt-8 sm:mt-10"
+                data-active={selectedChallenge ? "true" : "false"}
+              >
                 <AnimatePresence mode="wait">
                   {selectedChallenge ? (
                     <motion.div
                       key={selectedChallenge.id}
-                      initial={enableMotion ? { opacity: 1, y: 6 } : false}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={enableMotion ? { opacity: 1, y: -4 } : undefined}
-                      transition={{ duration: 0.28 }}
-                      className="mt-5 max-w-3xl border-l-2 border-accent/35 pl-4 sm:pl-5"
+                      initial={enableMotion ? { opacity: 0 } : false}
+                      animate={{ opacity: 1 }}
+                      exit={enableMotion ? { opacity: 0 } : undefined}
+                      transition={CHALLENGE_FADE}
+                      className="max-w-3xl"
                     >
-                      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent/85">
-                        {matchedPreset === selectedChallenge.id
-                          ? "Active challenge"
-                          : "Exploring from challenge"}
+                      <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-accent">
+                        Current Leadership Challenge
                       </p>
-                      <p className="mt-1.5 text-sm font-medium text-foreground">
+                      <p className="mt-3 font-serif text-lg tracking-tight text-foreground sm:text-xl sm:leading-snug">
                         {selectedChallenge.label}
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-muted">
-                        {selectedChallenge.explanation}
-                      </p>
+                      <div className="mt-3.5 space-y-3 text-sm leading-[1.7] text-muted sm:mt-4 sm:text-[0.95rem] sm:leading-[1.75]">
+                        {selectedChallenge.explanation
+                          .split(/\n\n+/)
+                          .map((paragraph) => (
+                            <p key={paragraph}>{paragraph}</p>
+                          ))}
+                      </div>
                     </motion.div>
                   ) : (
                     <motion.p
                       key="custom"
-                      initial={enableMotion ? { opacity: 1 } : false}
+                      initial={enableMotion ? { opacity: 0 } : false}
                       animate={{ opacity: 1 }}
-                      exit={enableMotion ? { opacity: 1 } : undefined}
-                      className="mt-5 text-sm leading-relaxed text-muted/75"
+                      exit={enableMotion ? { opacity: 0 } : undefined}
+                      transition={CHALLENGE_FADE}
+                      className="max-w-2xl text-sm leading-relaxed text-muted/75"
                     >
-                      Adjust the decisions below — or start from a challenge
-                      that reflects the problem you&apos;re facing.
+                      Adjust the decisions below — or start from a challenge that
+                      reflects the problem you&apos;re facing.
                     </motion.p>
                   )}
                 </AnimatePresence>
-              </div>
 
-              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-accent/30 bg-[color-mix(in_srgb,var(--background)_35%,var(--background-elevated))] p-6 sm:p-8">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                      Leadership decisions
-                    </p>
+                <div className="mt-8 border-t border-border/55 pt-8 sm:mt-10 sm:pt-10">
+                  <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-accent/30 bg-[color-mix(in_srgb,var(--background)_35%,var(--background-elevated))] p-6 sm:p-8">
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                          Leadership decisions
+                        </p>
 
-                    <div className="mt-7 space-y-2">
-                      {SLIDER_DEFINITIONS.map((slider) => {
-                        const isActive = activeSliderId === slider.id;
-                        return (
-                          <div
-                            key={slider.id}
-                            data-active={isActive}
-                            className="tradeoff-decision rounded-xl px-3 py-4 transition-[background-color,opacity] duration-300 sm:px-4"
-                          >
-                            <div className="flex items-end justify-between gap-4">
-                              <label
-                                htmlFor={`engine-${slider.id}`}
-                                className="text-sm font-medium text-foreground"
+                        <div className="mt-7 space-y-2">
+                          {SLIDER_DEFINITIONS.map((slider) => {
+                            const isActive = activeSliderId === slider.id;
+                            return (
+                              <div
+                                key={slider.id}
+                                data-active={isActive}
+                                className="tradeoff-decision rounded-xl px-3 py-4 transition-[background-color,opacity] duration-300 sm:px-4"
                               >
-                                {slider.label}
-                              </label>
-                              <span className="text-xs tabular-nums text-muted">
-                                {slider.left}
-                                {" · "}
-                                {slider.right}
-                              </span>
+                                <div className="flex items-end justify-between gap-4">
+                                  <label
+                                    htmlFor={`engine-${slider.id}`}
+                                    className="text-sm font-medium text-foreground"
+                                  >
+                                    {slider.label}
+                                  </label>
+                                  <span className="text-xs tabular-nums text-muted">
+                                    {slider.left}
+                                    {" · "}
+                                    {slider.right}
+                                  </span>
+                                </div>
+                                <p className="mt-1 text-xs leading-relaxed text-muted/80">
+                                  {slider.represents}
+                                </p>
+                                <input
+                                  id={`engine-${slider.id}`}
+                                  type="range"
+                                  min={0}
+                                  max={100}
+                                  step={1}
+                                  value={inputs[slider.id]}
+                                  onChange={(event) =>
+                                    handleSliderValue(
+                                      slider.id,
+                                      event.target.value,
+                                    )
+                                  }
+                                  onInput={(event) =>
+                                    handleSliderValue(
+                                      slider.id,
+                                      (event.target as HTMLInputElement).value,
+                                    )
+                                  }
+                                  onPointerDown={() =>
+                                    setActiveSliderId(slider.id)
+                                  }
+                                  onFocus={() => setActiveSliderId(slider.id)}
+                                  className="tradeoff-slider mt-3 w-full"
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                  aria-valuenow={Math.round(inputs[slider.id])}
+                                  aria-valuetext={`${slider.left} to ${slider.right}: ${Math.round(inputs[slider.id])}`}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-border/80 bg-background/40 p-5 sm:p-6">
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+                          Understanding {activeSlider.label}
+                        </p>
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={activeSlider.id}
+                            initial={
+                              enableMotion ? { opacity: 0 } : false
+                            }
+                            animate={{ opacity: 1 }}
+                            exit={
+                              enableMotion ? { opacity: 0 } : undefined
+                            }
+                            transition={CHALLENGE_FADE}
+                            className="mt-4 space-y-5"
+                          >
+                            <div>
+                              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
+                                Why leaders increase it
+                              </p>
+                              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground/90">
+                                {activeSlider.context.whyLeadersIncrease.map(
+                                  (item) => (
+                                    <li key={item} className="flex gap-2">
+                                      <span
+                                        aria-hidden
+                                        className="mt-2 size-1 shrink-0 rounded-full bg-accent/70"
+                                      />
+                                      <span>{item}</span>
+                                    </li>
+                                  ),
+                                )}
+                              </ul>
                             </div>
-                            <p className="mt-1 text-xs leading-relaxed text-muted/80">
-                              {slider.represents}
-                            </p>
-                            <input
-                              id={`engine-${slider.id}`}
-                              type="range"
-                              min={0}
-                              max={100}
-                              step={1}
-                              value={inputs[slider.id]}
-                              onChange={(event) =>
-                                handleSliderValue(
-                                  slider.id,
-                                  event.target.value,
-                                )
-                              }
-                              onInput={(event) =>
-                                handleSliderValue(
-                                  slider.id,
-                                  (event.target as HTMLInputElement).value,
-                                )
-                              }
-                              onPointerDown={() =>
-                                setActiveSliderId(slider.id)
-                              }
-                              onFocus={() => setActiveSliderId(slider.id)}
-                              className="tradeoff-slider mt-3 w-full"
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                              aria-valuenow={Math.round(inputs[slider.id])}
-                              aria-valuetext={`${slider.left} to ${slider.right}: ${Math.round(inputs[slider.id])}`}
-                            />
-                          </div>
-                        );
-                      })}
+                            <div>
+                              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
+                                What often changes
+                              </p>
+                              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground/90">
+                                {activeSlider.context.whatOftenChanges.map(
+                                  (item) => (
+                                    <li key={item} className="flex gap-2">
+                                      <span
+                                        aria-hidden
+                                        className="mt-2 size-1 shrink-0 rounded-full bg-signal-caution"
+                                      />
+                                      <span>{item}</span>
+                                    </li>
+                                  ),
+                                )}
+                              </ul>
+                            </div>
+                            <div className="border-t border-border/70 pt-5">
+                              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
+                                Leadership question
+                              </p>
+                              <p className="mt-3 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:text-xl sm:leading-[1.5]">
+                                {activeSlider.context.leadershipQuestion}
+                              </p>
+                            </div>
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setPrinciplesOpen(true)}
+                        className="group inline-flex items-center gap-2 px-1 text-sm text-muted transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                      >
+                        View the principles behind the model
+                        <span
+                          aria-hidden
+                          className="transition-transform duration-300 group-hover:translate-x-0.5"
+                        >
+                          →
+                        </span>
+                      </button>
                     </div>
-                  </div>
 
-                  <div className="rounded-2xl border border-border/80 bg-background/40 p-5 sm:p-6">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                      Understanding {activeSlider.label}
-                    </p>
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeSlider.id}
-                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={enableMotion ? { opacity: 1, y: -3 } : undefined}
-                        transition={{ duration: 0.25 }}
-                        className="mt-4 space-y-5"
-                      >
-                        <div>
-                          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
-                            Why leaders increase it
-                          </p>
-                          <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground/90">
-                            {activeSlider.context.whyLeadersIncrease.map(
-                              (item) => (
-                                <li key={item} className="flex gap-2">
-                                  <span
-                                    aria-hidden
-                                    className="mt-2 size-1 shrink-0 rounded-full bg-accent/70"
-                                  />
-                                  <span>{item}</span>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
-                            What often changes
-                          </p>
-                          <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground/90">
-                            {activeSlider.context.whatOftenChanges.map(
-                              (item) => (
-                                <li key={item} className="flex gap-2">
-                                  <span
-                                    aria-hidden
-                                    className="mt-2 size-1 shrink-0 rounded-full bg-signal-caution"
-                                  />
-                                  <span>{item}</span>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                        <div className="border-t border-border/70 pt-5">
-                          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
-                            Leadership question
-                          </p>
-                          <p className="mt-3 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:text-xl sm:leading-[1.5]">
-                            {activeSlider.context.leadershipQuestion}
-                          </p>
-                        </div>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
+                    <div className="space-y-4" aria-live="polite">
+                      <AnimatePresence mode="wait">
+                        {reflection.challengeLens && selectedChallengeId ? (
+                          <motion.div
+                            key={`lens-${selectedChallengeId}`}
+                            initial={
+                              enableMotion ? { opacity: 0 } : false
+                            }
+                            animate={{ opacity: 1 }}
+                            exit={
+                              enableMotion ? { opacity: 0 } : undefined
+                            }
+                            transition={CHALLENGE_FADE}
+                            className="rounded-2xl border border-accent/25 bg-[color-mix(in_srgb,var(--accent)_6%,var(--background-elevated))] px-5 py-4 sm:px-6"
+                          >
+                            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent">
+                              Keep in mind
+                            </p>
+                            <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                              {reflection.challengeLens}
+                            </p>
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
 
-                  <button
-                    type="button"
-                    onClick={() => setPrinciplesOpen(true)}
-                    className="group inline-flex items-center gap-2 px-1 text-sm text-muted transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                  >
-                    View the principles behind the model
-                    <span
-                      aria-hidden
-                      className="transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
-                  </button>
-                </div>
+                      <ReflectionPanel
+                        label="Potential Benefits"
+                        tone="calm"
+                        items={reflection.benefits}
+                        enableMotion={enableMotion}
+                        revisionKey={selectedChallengeId ?? "none"}
+                      />
+                      <ReflectionPanel
+                        label="Potential Costs"
+                        tone="stress"
+                        items={reflection.costs}
+                        enableMotion={enableMotion}
+                        revisionKey={selectedChallengeId ?? "none"}
+                      />
+                      <ReflectionPanel
+                        label="Organizational Effects"
+                        tone="uncertain"
+                        items={reflection.organizationalEffects}
+                        enableMotion={enableMotion}
+                        revisionKey={selectedChallengeId ?? "none"}
+                      />
 
-                <div className="space-y-4" aria-live="polite">
-                  <AnimatePresence mode="wait">
-                    {reflection.challengeLens ? (
-                      <motion.div
-                        key={`lens-${reflection.challengeLabel}`}
-                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={enableMotion ? { opacity: 1 } : undefined}
-                        transition={{ duration: 0.25 }}
-                        className="rounded-2xl border border-accent/25 bg-[color-mix(in_srgb,var(--accent)_6%,var(--background-elevated))] px-5 py-4 sm:px-6"
-                      >
-                        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent">
-                          Guidance for {reflection.challengeLabel}
+                      <div className="rounded-2xl border border-border/80 bg-background/40 px-5 py-6 sm:px-6 sm:py-7">
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+                          Questions to Consider
                         </p>
-                        <p className="mt-2 text-sm leading-relaxed text-foreground/90">
-                          {reflection.challengeLens}
-                        </p>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-
-                  <ReflectionPanel
-                    label="Potential Benefits"
-                    tone="calm"
-                    items={reflection.benefits}
-                    enableMotion={enableMotion}
-                  />
-                  <ReflectionPanel
-                    label="Potential Costs"
-                    tone="stress"
-                    items={reflection.costs}
-                    enableMotion={enableMotion}
-                  />
-                  <ReflectionPanel
-                    label="Organizational Effects"
-                    tone="uncertain"
-                    items={reflection.organizationalEffects}
-                    enableMotion={enableMotion}
-                  />
-
-                  <div className="rounded-2xl border border-border/80 bg-background/40 px-5 py-6 sm:px-6 sm:py-7">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                      Questions to Consider
-                    </p>
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={reflection.question}
-                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={enableMotion ? { opacity: 1, y: -3 } : undefined}
-                        transition={{ duration: 0.28 }}
-                        className="mt-4 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:mt-5 sm:text-xl sm:leading-[1.5]"
-                      >
-                        {reflection.question}
-                      </motion.p>
-                    </AnimatePresence>
+                        <AnimatePresence mode="wait">
+                          <motion.p
+                            key={`${selectedChallengeId ?? "none"}-${reflection.question}`}
+                            initial={
+                              enableMotion ? { opacity: 0 } : false
+                            }
+                            animate={{ opacity: 1 }}
+                            exit={
+                              enableMotion ? { opacity: 0 } : undefined
+                            }
+                            transition={CHALLENGE_FADE}
+                            className="mt-4 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:mt-5 sm:text-xl sm:leading-[1.5]"
+                          >
+                            {reflection.question}
+                          </motion.p>
+                        </AnimatePresence>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -624,11 +646,14 @@ function ReflectionPanel({
   tone,
   items,
   enableMotion,
+  revisionKey,
 }: {
   label: string;
   tone: "calm" | "stress" | "uncertain";
   items: string[];
   enableMotion: boolean;
+  /** Challenge id (or sentinel) so lists crossfade when the lens changes. */
+  revisionKey: string;
 }) {
   const toneClass =
     tone === "calm"
@@ -644,32 +669,41 @@ function ReflectionPanel({
       >
         {label}
       </p>
-      <ul className="mt-3.5 space-y-2.5">
-        <AnimatePresence mode="popLayout">
-          {items.map((item) => (
-            <motion.li
-              key={item}
-              initial={enableMotion ? { opacity: 1, y: 4 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={enableMotion ? { opacity: 1 } : undefined}
-              transition={{ duration: 0.2 }}
-              className="flex gap-2.5 text-sm leading-relaxed text-foreground"
-            >
-              <span
-                aria-hidden
-                className={`mt-2 size-1 shrink-0 rounded-full ${
-                  tone === "calm"
-                    ? "bg-signal-calm"
-                    : tone === "stress"
-                      ? "bg-signal-stress"
-                      : "bg-signal-uncertain"
-                }`}
-              />
-              <span>{item}</span>
-            </motion.li>
-          ))}
-        </AnimatePresence>
-      </ul>
+      <AnimatePresence mode="wait">
+        <motion.ul
+          key={revisionKey}
+          initial={enableMotion ? { opacity: 0 } : false}
+          animate={{ opacity: 1 }}
+          exit={enableMotion ? { opacity: 0 } : undefined}
+          transition={CHALLENGE_FADE}
+          className="mt-3.5 space-y-2.5"
+        >
+          <AnimatePresence mode="popLayout">
+            {items.map((item) => (
+              <motion.li
+                key={item}
+                initial={enableMotion ? { opacity: 0 } : false}
+                animate={{ opacity: 1 }}
+                exit={enableMotion ? { opacity: 0 } : undefined}
+                transition={{ duration: 0.18 }}
+                className="flex gap-2.5 text-sm leading-relaxed text-foreground"
+              >
+                <span
+                  aria-hidden
+                  className={`mt-2 size-1 shrink-0 rounded-full ${
+                    tone === "calm"
+                      ? "bg-signal-calm"
+                      : tone === "stress"
+                        ? "bg-signal-stress"
+                        : "bg-signal-uncertain"
+                  }`}
+                />
+                <span>{item}</span>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
+      </AnimatePresence>
     </div>
   );
 }
