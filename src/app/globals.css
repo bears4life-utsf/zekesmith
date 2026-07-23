@@ -198,6 +198,20 @@ body {
   opacity: 0.85;
 }
 
+/* Active decision row — “current chapter” without dashboard chrome */
+.tradeoff-decision {
+  opacity: 0.62;
+}
+
+.tradeoff-decision[data-active="true"] {
+  opacity: 1;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.tradeoff-decision[data-active="true"] label {
+  color: var(--foreground);
+}
+
 .tradeoff-slider {
   appearance: none;
   height: 0.45rem;
@@ -206,6 +220,10 @@ body {
   outline: none;
   cursor: grab;
   transition: background-color 220ms ease;
+}
+
+.tradeoff-decision[data-active="true"] .tradeoff-slider {
+  background: color-mix(in srgb, var(--accent) 32%, var(--border));
 }
 
 .tradeoff-slider:hover {
@@ -388,6 +406,7 @@ body {
   .nav-link::after,
   .preset-chip,
   .exploring-item,
+  .tradeoff-decision,
   .tradeoff-slider,
   .tradeoff-slider::-webkit-slider-thumb,
   .tradeoff-slider::-moz-range-thumb {

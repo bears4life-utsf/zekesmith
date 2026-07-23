@@ -155,32 +155,23 @@ export function ProductTradeoffEngine() {
               title="The Product Tradeoff Engine"
               className="max-w-4xl"
             />
-            <p className="mt-4 max-w-3xl text-pretty text-base italic leading-[1.65] text-muted sm:text-lg sm:leading-[1.7]">
-              An interactive mental model for exploring the competing forces
-              that shape software products.
+            <p className="mt-5 max-w-3xl text-pretty font-serif text-xl leading-[1.55] tracking-tight text-foreground sm:mt-6 sm:text-2xl sm:leading-[1.5]">
+              Great software products aren&apos;t built by eliminating
+              tradeoffs. They&apos;re built by navigating them.
             </p>
 
-            <div className="mt-7 max-w-[56rem] space-y-3.5 text-pretty text-base leading-[1.7] text-muted sm:mt-8 sm:space-y-4 sm:text-[1.05rem] sm:leading-[1.7]">
+            <div className="mt-7 max-w-[40rem] space-y-4 text-pretty text-base leading-[1.7] text-muted sm:mt-8 sm:space-y-5 sm:text-[1.05rem] sm:leading-[1.75]">
               <p>
-                Great software products are built through thousands of
-                tradeoffs.
-              </p>
-              <p>Every decision influences something else.</p>
-              <p>
-                Increasing delivery speed may reduce quality. Investing in
-                innovation may reduce predictability. Larger teams may increase
-                capacity while also increasing coordination costs.
+                Every leadership decision changes something else. Increasing
+                delivery speed may reduce quality. Growing a team may increase
+                capacity while slowing decisions. Investing in innovation may
+                reduce predictability.
               </p>
               <p>
-                Experienced product leaders don&apos;t eliminate these
-                tensions—they learn to navigate them.
-              </p>
-              <p>
-                This interactive mental model explores how those competing
-                forces influence one another. It isn&apos;t intended to predict
-                outcomes or prescribe the &ldquo;right&rdquo; answer. Instead,
-                it&apos;s a way to visualize the tradeoffs that shape software
-                organizations and the decisions product leaders make every day.
+                Experienced product leaders learn that every optimization
+                creates a new constraint. This interactive mental model explores
+                those relationships—not to provide answers, but to encourage
+                better questions.
               </p>
             </div>
 
@@ -206,12 +197,12 @@ export function ProductTradeoffEngine() {
             <div className="space-y-6 sm:space-y-7">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                  Organizational scenarios
+                  Leadership scenarios
                 </p>
                 <div
                   className="mt-3.5 flex flex-wrap gap-2"
                   role="group"
-                  aria-label="Organizational scenarios"
+                  aria-label="Leadership scenarios"
                 >
                   {PRESETS.map((preset) => {
                     const selected = activePreset === preset.id;
@@ -243,12 +234,12 @@ export function ProductTradeoffEngine() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={enableMotion ? { opacity: 0, y: -4 } : undefined}
                       transition={{ duration: 0.28 }}
-                      className="mt-4 max-w-3xl rounded-2xl border border-border/80 bg-background/40 px-4 py-3.5 sm:px-5 sm:py-4"
+                      className="mt-5 max-w-3xl border-l-2 border-accent/35 pl-4 sm:pl-5"
                     >
                       <p className="text-sm font-medium text-foreground">
                         {activePresetMeta.label}
                       </p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted">
+                      <p className="mt-2 text-sm leading-relaxed text-muted">
                         {activePresetMeta.explanation}
                       </p>
                     </motion.div>
@@ -258,9 +249,9 @@ export function ProductTradeoffEngine() {
                       initial={enableMotion ? { opacity: 0 } : false}
                       animate={{ opacity: 1 }}
                       exit={enableMotion ? { opacity: 0 } : undefined}
-                      className="mt-4 text-sm text-muted/80"
+                      className="mt-5 text-sm leading-relaxed text-muted/75"
                     >
-                      Adjust the forces below — or start from a scenario that
+                      Adjust the decisions below — or start from a scenario that
                       resembles an organization you know.
                     </motion.p>
                   )}
@@ -271,14 +262,18 @@ export function ProductTradeoffEngine() {
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-accent/30 bg-[color-mix(in_srgb,var(--background)_35%,var(--background-elevated))] p-6 sm:p-8">
                     <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                      Competing forces
+                      Leadership decisions
                     </p>
 
-                    <div className="mt-7 space-y-8">
+                    <div className="mt-7 space-y-2">
                       {SLIDER_DEFINITIONS.map((slider) => {
                         const isActive = activeSliderId === slider.id;
                         return (
-                          <div key={slider.id}>
+                          <div
+                            key={slider.id}
+                            data-active={isActive}
+                            className="tradeoff-decision rounded-xl px-3 py-4 transition-[background-color,opacity] duration-300 sm:px-4"
+                          >
                             <div className="flex items-end justify-between gap-4">
                               <label
                                 htmlFor={`engine-${slider.id}`}
@@ -315,11 +310,6 @@ export function ProductTradeoffEngine() {
                               aria-valuenow={Math.round(inputs[slider.id])}
                               aria-valuetext={`${slider.left} to ${slider.right}: ${Math.round(inputs[slider.id])}`}
                             />
-                            {isActive ? (
-                              <p className="mt-2 text-xs italic leading-relaxed text-accent/90">
-                                {slider.context.leadershipQuestion}
-                              </p>
-                            ) : null}
                           </div>
                         );
                       })}
@@ -328,7 +318,7 @@ export function ProductTradeoffEngine() {
 
                   <div className="rounded-2xl border border-border/80 bg-background/40 p-5 sm:p-6">
                     <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                      Looking at {activeSlider.label}
+                      Understanding {activeSlider.label}
                     </p>
                     <AnimatePresence mode="wait">
                       <motion.div
@@ -337,7 +327,7 @@ export function ProductTradeoffEngine() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={enableMotion ? { opacity: 0, y: -3 } : undefined}
                         transition={{ duration: 0.25 }}
-                        className="mt-4 space-y-4"
+                        className="mt-4 space-y-5"
                       >
                         <div>
                           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
@@ -375,11 +365,11 @@ export function ProductTradeoffEngine() {
                             )}
                           </ul>
                         </div>
-                        <div>
+                        <div className="border-t border-border/70 pt-5">
                           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted/80">
                             Leadership question
                           </p>
-                          <p className="mt-2 text-pretty text-base leading-[1.65] text-foreground">
+                          <p className="mt-3 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:text-xl sm:leading-[1.5]">
                             {activeSlider.context.leadershipQuestion}
                           </p>
                         </div>
@@ -422,7 +412,7 @@ export function ProductTradeoffEngine() {
                     enableMotion={enableMotion}
                   />
 
-                  <div className="rounded-2xl border border-border/80 bg-background/40 p-5 sm:p-6">
+                  <div className="rounded-2xl border border-border/80 bg-background/40 px-5 py-6 sm:px-6 sm:py-7">
                     <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
                       Questions to Consider
                     </p>
@@ -433,7 +423,7 @@ export function ProductTradeoffEngine() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={enableMotion ? { opacity: 0, y: -3 } : undefined}
                         transition={{ duration: 0.28 }}
-                        className="mt-3 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:text-xl"
+                        className="mt-4 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:mt-5 sm:text-xl sm:leading-[1.5]"
                       >
                         {reflection.question}
                       </motion.p>
@@ -442,6 +432,60 @@ export function ProductTradeoffEngine() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-14 max-w-3xl sm:mt-16">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+              Related essays
+            </p>
+            <ul className="mt-6 space-y-8 sm:mt-7 sm:space-y-9">
+              <li>
+                <a
+                  href="#beyond-safe"
+                  className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  <h3 className="font-serif text-xl tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-[1.35rem]">
+                    When SAFe Stops Scaling
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
+                    How coordination gradually became more expensive than the
+                    value it created.
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm text-accent">
+                    Read Essay
+                    <span
+                      aria-hidden
+                      className="transition-transform duration-300 group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#product-operating-model"
+                  className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  <h3 className="font-serif text-xl tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-[1.35rem]">
+                    The product operating model actually works
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
+                    Why empowered teams change the way organizations make
+                    decisions.
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm text-accent">
+                    Read Essay
+                    <span
+                      aria-hidden
+                      className="transition-transform duration-300 group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </span>
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

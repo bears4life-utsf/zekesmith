@@ -2,8 +2,8 @@
  * Product Tradeoff Engine — interactive mental model
  *
  * This is not a calculator, prediction engine, or claim of universal truth.
- * It encodes how one experienced product leader reasons about competing
- * forces that shape software products and organizations.
+ * It encodes how one experienced product leader reasons about the
+ * leadership decisions that shape software products and organizations.
  *
  * Numeric relationships are intentionally approximate. They exist to make
  * tensions visible — not to score organizations or prescribe answers.
@@ -226,7 +226,7 @@ export const PRESETS: Preset[] = [
     label: "Startup",
     blurb: "Learn fast with a small team.",
     explanation:
-      "Early-stage products usually buy learning with speed and a narrow scope. Quality and predictability are secondary until the team finds what customers actually need.",
+      "Early-stage organizations usually trade polish and predictability for speed and learning. Scope stays narrow so a small team can discover what customers actually need before optimizing for scale.",
     tint: "amber",
     inputs: {
       scope: 28,
@@ -242,7 +242,7 @@ export const PRESETS: Preset[] = [
     label: "Enterprise Platform",
     blurb: "Breadth, reliability, and a high bar.",
     explanation:
-      "Platform work often carries broad scope and a high quality bar. Speed gives way to stability because many other teams and customers depend on what you ship.",
+      "Platform organizations often optimize for breadth and reliability because many teams depend on what they ship. The tradeoff is slower delivery: stability becomes more valuable than pace.",
     tint: "navy",
     inputs: {
       scope: 78,
@@ -258,7 +258,7 @@ export const PRESETS: Preset[] = [
     label: "AI Transformation",
     blurb: "High novelty, fast learning loops.",
     explanation:
-      "AI initiatives raise novelty faster than most organizations raise confidence. The useful posture is focused bets, rapid learning, and an honest quality bar for what customers will trust.",
+      "Organizations investing heavily in AI often accept greater uncertainty in exchange for faster learning and long-term differentiation. Confidence lags novelty until evidence catches up.",
     tint: "teal",
     inputs: {
       scope: 36,
@@ -274,7 +274,7 @@ export const PRESETS: Preset[] = [
     label: "Platform Modernization",
     blurb: "Health over feature theater.",
     explanation:
-      "Modernization protects future velocity. Scope stays tight on purpose so quality and architecture can improve without pretending the work is a customer-facing feature release.",
+      "Modernization protects future velocity. Leaders keep scope intentionally tight so quality and architecture can improve—without dressing infrastructure work up as a customer-facing release.",
     tint: "steel",
     inputs: {
       scope: 32,
@@ -306,7 +306,7 @@ export const PRESETS: Preset[] = [
     label: "Growth at Scale",
     blurb: "More customers, more surface area.",
     explanation:
-      "Growth stretches scope and team size together. The risk is optimizing for capacity while coordination and quality quietly become the real constraint.",
+      "Growth stretches scope and team size together. Organizations that optimize only for capacity often discover that coordination and quality quietly become the real constraint.",
     tint: "burgundy",
     inputs: {
       scope: 70,
@@ -322,7 +322,7 @@ export const PRESETS: Preset[] = [
     label: "Regulated Enterprise",
     blurb: "Trust and compliance set the pace.",
     explanation:
-      "In regulated contexts, quality and predictability are not preferences — they are constraints. Innovation still matters, but it has to survive audit, risk, and operational scrutiny.",
+      "In regulated contexts, quality and predictability are constraints rather than preferences. Innovation still matters, but it has to survive audit, risk review, and operational scrutiny.",
     tint: "slate",
     inputs: {
       scope: 55,
@@ -338,7 +338,7 @@ export const PRESETS: Preset[] = [
     label: "Customer Expansion",
     blurb: "Protect a promise under pressure.",
     explanation:
-      "A committed customer date raises delivery speed and scope together. Leaders who ignore the quality and capacity side of that trade usually discover it in support queues.",
+      "A committed customer date often raises delivery speed and scope at once. Leaders who ignore the quality and capacity side of that trade usually meet it later in support queues.",
     tint: "forest",
     inputs: {
       scope: 62,
@@ -354,7 +354,7 @@ export const PRESETS: Preset[] = [
     label: "Enterprise Coordination",
     blurb: "Alignment tax at scale.",
     explanation:
-      "When planning and dependencies dominate, organizations often grow team size and scope while delivery speed and innovation stall. Coordination becomes the product. Linked from the essay When SAFe Stops Scaling.",
+      "Organizations with many teams often optimize for coordination and predictability. The tradeoff is that decision making can become slower as planning and governance increase.",
     tint: "navy",
     relatedEssayId: "beyond-safe",
     inputs: {
@@ -371,7 +371,7 @@ export const PRESETS: Preset[] = [
     label: "Empowered Product Teams",
     blurb: "Outcomes over ceremony.",
     explanation:
-      "Empowered teams keep scope focused, hold a meaningful quality bar, and leave room for discovery. Size stays small enough that ownership is real. Linked from the essay The product operating model actually works.",
+      "Organizations prioritize local decision making, continuous discovery, and customer ownership while accepting less centralized control. Team size stays small enough that ownership remains real.",
     tint: "forest",
     relatedEssayId: "product-operating-model",
     inputs: {
@@ -633,7 +633,7 @@ export function getReflection(
   if (benefits.length === 0) {
     benefits.push({
       weight: 40,
-      text: "A workable balance — no single force is dominating yet",
+      text: "A workable balance — no single decision is dominating yet",
     });
   }
 
@@ -792,7 +792,7 @@ export function getReflection(
   if (questions.length === 0) {
     questions.push({
       weight: 50,
-      text: "If one of these forces had to give, which would you choose — and why?",
+      text: "If one of these decisions had to give, which would you choose — and why?",
     });
   }
 
