@@ -3,6 +3,8 @@ export type ScenarioOptionId = "A" | "B" | "C";
 export type ScenarioOption = {
   id: ScenarioOptionId;
   label: string;
+  /** Short editorial lens shown on the choice card */
+  lens: string;
   analysis: string;
   upside: string;
   risk: string;
@@ -13,6 +15,8 @@ export type ProductLeadershipScenario = {
   category: string;
   title: string;
   situation: string;
+  stakeholders: string[];
+  constraints: string[];
   options: ScenarioOption[];
   preferredOptionId: ScenarioOptionId;
   myApproach: string;
@@ -25,11 +29,14 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
     title: "The promised launch date is at risk",
     situation:
       "Sales has committed a major customer to a launch in six weeks. Engineering believes the product needs at least three additional months to meet the original scope and quality expectations. The customer is strategically important, but the team is already stretched.",
+    stakeholders: ["Sales", "Engineering", "Customer"],
+    constraints: ["Six-week deadline", "Team capacity", "Product quality"],
     options: [
       {
         id: "A",
         label:
           "Hold the original date and require the team to deliver the full scope.",
+        lens: "Fastest path",
         analysis:
           "This protects the external commitment and may preserve short-term customer confidence, but it creates a high risk of quality problems, burnout, and missed expectations if the team cannot realistically deliver.",
         upside:
@@ -39,16 +46,17 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
       {
         id: "B",
         label: "Move the launch date and preserve the full scope.",
+        lens: "Lowest risk",
         analysis:
           "This protects quality and gives the team time to deliver the complete experience, but it may damage customer confidence and create commercial consequences.",
-        upside:
-          "The team can deliver a more complete and reliable product.",
+        upside: "The team can deliver a more complete and reliable product.",
         risk: "The customer may view the delay as a failure to honor the commitment.",
       },
       {
         id: "C",
         label:
           "Keep the date but narrow the release to the smallest valuable customer outcome.",
+        lens: "Most customer-focused",
         analysis:
           "This preserves momentum while forcing the organization to separate the essential customer outcome from the original wish list. It requires transparent communication and disciplined scope decisions.",
         upside:
@@ -66,10 +74,13 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
     title: "Your largest customer wants a highly specific feature",
     situation:
       "Your largest customer requests a feature that would help their unique workflow. Sales believes it could protect significant revenue. Product discovery suggests that very few other customers have the same need.",
+    stakeholders: ["Sales", "Product", "Largest customer"],
+    constraints: ["Revenue risk", "Roadmap focus", "Long-term maintainability"],
     options: [
       {
         id: "A",
         label: "Prioritize the feature because of the revenue at risk.",
+        lens: "Highest short-term cost",
         analysis:
           "This may protect an important account and strengthen the commercial relationship, but it can move the product toward custom development and create long-term maintenance costs.",
         upside:
@@ -80,16 +91,17 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
         id: "B",
         label:
           "Decline the request because it does not represent the broader market.",
+        lens: "Lowest risk",
         analysis:
           "This protects the product strategy and team focus, but it may underestimate the strategic importance of the customer or the possibility that the request reveals an emerging need.",
-        upside:
-          "The product remains focused on scalable market needs.",
+        upside: "The product remains focused on scalable market needs.",
         risk: "The organization may lose the customer or miss an important market signal.",
       },
       {
         id: "C",
         label:
           "Investigate the underlying problem and look for a scalable capability.",
+        lens: "Most customer-focused",
         analysis:
           "This delays an immediate yes or no while the team determines whether the request can be reframed into a broader customer problem. It requires both discovery and honest commercial communication.",
         upside:
@@ -107,11 +119,14 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
     title: "Leadership wants AI added to the roadmap immediately",
     situation:
       "Executives want every product area to announce an AI initiative this quarter. Your team has several promising ideas, but customer research has not yet identified which one creates enough value to justify the investment.",
+    stakeholders: ["Executives", "Product", "Customers"],
+    constraints: ["Quarterly optics", "Unvalidated ideas", "Investment discipline"],
     options: [
       {
         id: "A",
         label:
           "Select the most visible AI concept and move directly into delivery.",
+        lens: "Fastest path",
         analysis:
           "This demonstrates speed and may generate organizational excitement, but it risks creating a feature that looks impressive without solving a meaningful customer problem.",
         upside: "The organization can quickly show progress in AI.",
@@ -120,16 +135,17 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
       {
         id: "B",
         label: "Refuse to commit until discovery is complete.",
+        lens: "Lowest risk",
         analysis:
           "This protects product discipline, but it may appear overly cautious and can prevent the team from learning through experimentation.",
-        upside:
-          "Investment remains grounded in validated customer needs.",
+        upside: "Investment remains grounded in validated customer needs.",
         risk: "The organization may lose momentum while competitors continue experimenting.",
       },
       {
         id: "C",
         label:
           "Run a small, measurable experiment around the strongest customer problem.",
+        lens: "Most customer-focused",
         analysis:
           "This allows the team to learn quickly without presenting an experiment as a finished strategy. Success criteria must be based on customer outcomes rather than novelty or usage alone.",
         upside: "The team builds evidence while maintaining momentum.",
@@ -146,10 +162,13 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
     title: "Engineering wants to pause feature work to address technical debt",
     situation:
       "Engineering recommends spending the next quarter modernizing part of the platform. Customers will not directly see most of the work. Product and sales are concerned that pausing visible improvements will slow growth.",
+    stakeholders: ["Engineering", "Product", "Sales"],
+    constraints: ["Visible roadmap", "Platform health", "Growth pressure"],
     options: [
       {
         id: "A",
         label: "Continue feature delivery and postpone the technical work.",
+        lens: "Fastest path",
         analysis:
           "This preserves near-term roadmap momentum, but unresolved technical constraints may continue to reduce delivery speed and increase operational risk.",
         upside: "Customers continue receiving visible enhancements.",
@@ -158,6 +177,7 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
       {
         id: "B",
         label: "Pause feature development for the entire quarter.",
+        lens: "Highest short-term cost",
         analysis:
           "This gives engineering concentrated time to improve the platform, but it may disconnect the investment from measurable customer or business outcomes.",
         upside:
@@ -168,6 +188,7 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
         id: "C",
         label:
           "Fund the technical work based on the customer and delivery outcomes it unlocks.",
+        lens: "Most customer-focused",
         analysis:
           "This reframes technical debt as a product investment rather than an engineering side project. It may require sequencing work over multiple releases instead of using an all-or-nothing quarter.",
         upside:
@@ -185,10 +206,13 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
     title: "The roadmap is full, but customer outcomes are unclear",
     situation:
       "The organization has a detailed twelve-month roadmap with dozens of committed features. Teams are delivering regularly, but leaders cannot clearly explain which customer or business outcomes are improving.",
+    stakeholders: ["Leadership", "Product teams", "Customers"],
+    constraints: ["Committed features", "Unclear outcomes", "Delivery culture"],
     options: [
       {
         id: "A",
         label: "Keep the roadmap and add more delivery metrics.",
+        lens: "Fastest path",
         analysis:
           "This creates additional visibility into execution, but measuring more output does not necessarily reveal whether the work is producing value.",
         upside: "Leadership gains a clearer view of delivery performance.",
@@ -198,6 +222,7 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
         id: "B",
         label:
           "Replace the roadmap immediately with broad outcome statements.",
+        lens: "Highest short-term cost",
         analysis:
           "This signals a major change in philosophy, but removing delivery context too quickly may create confusion and reduce confidence across the organization.",
         upside:
@@ -208,6 +233,7 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
         id: "C",
         label:
           "Connect major initiatives to explicit outcomes and progressively remove unsupported commitments.",
+        lens: "Most customer-focused",
         analysis:
           "This preserves enough continuity for the organization to operate while shifting planning conversations toward evidence, learning, and results.",
         upside:
@@ -221,5 +247,11 @@ export const productLeadershipScenarios: ProductLeadershipScenario[] = [
   },
 ];
 
-export const simulatorClosing =
-  "Good product leadership is rarely about finding a perfect answer. It is about making the tradeoffs visible, choosing intentionally, and learning quickly.";
+export const simulatorClosingLead =
+  "Good product leadership is rarely about finding a perfect answer.";
+
+export const simulatorClosingBody =
+  "It is about making tradeoffs visible, choosing intentionally, and learning quickly.";
+
+/** @deprecated use simulatorClosingLead / simulatorClosingBody */
+export const simulatorClosing = `${simulatorClosingLead} ${simulatorClosingBody}`;
