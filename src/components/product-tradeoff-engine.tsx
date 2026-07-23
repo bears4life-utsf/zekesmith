@@ -56,12 +56,23 @@ function syncChallengeToUrl(presetId: PresetId | null) {
   }
 }
 
+function readChallengeIdFromUrl(): PresetId | null {
+  if (typeof window === "undefined") return null;
+  const slug = new URLSearchParams(window.location.search).get(
+    SCENARIO_QUERY_PARAM,
+  );
+  if (!slug) return null;
+  return getPresetBySlug(slug)?.id ?? null;
+}
+
 export function ProductTradeoffEngine() {
   const enableMotion = useEnableMotion();
   const principlesTitleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const [inputs, setInputs] = useState<SliderInputs>(DEFAULT_INPUTS);
+  const [selectedChallengeId, setSelectedChallengeId] =
+    useState<PresetId | null>(null);
   const [urlHydrated, setUrlHydrated] = useState(false);
   const [activeSliderId, setActiveSliderId] =
     useState<SliderId>("deliverySpeed");
@@ -69,13 +80,16 @@ export function ProductTradeoffEngine() {
 
   const outputs = useMemo(() => computeOutputs(inputs), [inputs]);
   const reflection = useMemo(
-    () => getReflection(inputs, outputs),
-    [inputs, outputs],
+    () => getReflection(inputs, outputs, selectedChallengeId),
+    [inputs, outputs, selectedChallengeId],
   );
-  const activePreset = useMemo(() => matchPreset(inputs), [inputs]);
-  const activePresetMeta = useMemo(
-    () => PRESETS.find((preset) => preset.id === activePreset) ?? null,
-    [activePreset],
+  const matchedPreset = useMemo(() => matchPreset(inputs), [inputs]);
+  const selectedChallenge = useMemo(
+    () =>
+      selectedChallengeId
+        ? (PRESETS.find((preset) => preset.id === selectedChallengeId) ?? null)
+        : null,
+    [selectedChallengeId],
   );
   const activeSlider = useMemo(
     () =>
@@ -86,23 +100,26 @@ export function ProductTradeoffEngine() {
 
   useEffect(() => {
     const fromUrl = readChallengeInputsFromUrl();
+    const challengeId = readChallengeIdFromUrl();
     startTransition(() => {
       if (fromUrl) setInputs(fromUrl);
+      if (challengeId) setSelectedChallengeId(challengeId);
       setUrlHydrated(true);
     });
   }, []);
 
   useEffect(() => {
     if (!urlHydrated) return;
-    syncChallengeToUrl(activePreset);
-  }, [activePreset, urlHydrated]);
+    syncChallengeToUrl(selectedChallengeId);
+  }, [selectedChallengeId, urlHydrated]);
 
   useEffect(() => {
     function onPopState() {
       const fromUrl = readChallengeInputsFromUrl();
-      if (!fromUrl) return;
+      const challengeId = readChallengeIdFromUrl();
       startTransition(() => {
-        setInputs(fromUrl);
+        if (fromUrl) setInputs(fromUrl);
+        setSelectedChallengeId(challengeId);
       });
     }
     window.addEventListener("popstate", onPopState);
@@ -138,6 +155,7 @@ export function ProductTradeoffEngine() {
   function applyPreset(id: PresetId) {
     const preset = PRESETS.find((item) => item.id === id);
     if (!preset) return;
+    setSelectedChallengeId(id);
     setInputs(preset.inputs);
   }
 
@@ -216,7 +234,7 @@ export function ProductTradeoffEngine() {
                   aria-label="Leadership challenges"
                 >
                   {PRESETS.map((preset) => {
-                    const selected = activePreset === preset.id;
+                    const selected = selectedChallengeId === preset.id;
                     return (
                       <button
                         key={preset.id}
@@ -239,9 +257,9 @@ export function ProductTradeoffEngine() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                  {activePresetMeta ? (
+                  {selectedChallenge ? (
                     <motion.div
-                      key={activePresetMeta.id}
+                      key={selectedChallenge.id}
                       initial={enableMotion ? { opacity: 1, y: 6 } : false}
                       animate={{ opacity: 1, y: 0 }}
                       exit={enableMotion ? { opacity: 1, y: -4 } : undefined}
@@ -249,13 +267,15 @@ export function ProductTradeoffEngine() {
                       className="mt-5 max-w-3xl border-l-2 border-accent/35 pl-4 sm:pl-5"
                     >
                       <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent/85">
-                        Active challenge
+                        {matchedPreset === selectedChallenge.id
+                          ? "Active challenge"
+                          : "Exploring from challenge"}
                       </p>
                       <p className="mt-1.5 text-sm font-medium text-foreground">
-                        {activePresetMeta.label}
+                        {selectedChallenge.label}
                       </p>
                       <p className="mt-2 text-sm leading-relaxed text-muted">
-                        {activePresetMeta.explanation}
+                        {selectedChallenge.explanation}
                       </p>
                     </motion.div>
                   ) : (

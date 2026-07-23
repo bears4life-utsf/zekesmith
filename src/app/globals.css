@@ -198,7 +198,8 @@ body {
   opacity: 0.85;
 }
 
-/* Active decision row — “current chapter” without dashboard chrome */
+/* Active decision row — “current chapter” without dashboard chrome.
+   Dim labels only — never the slider — so inactive rows stay usable. */
 .tradeoff-decision {
   opacity: 1;
 }
@@ -206,7 +207,7 @@ body {
 .tradeoff-decision:not([data-active="true"]) label,
 .tradeoff-decision:not([data-active="true"]) > p,
 .tradeoff-decision:not([data-active="true"]) > div > span {
-  opacity: 0.72;
+  opacity: 0.86;
 }
 
 .tradeoff-decision[data-active="true"] {
@@ -221,7 +222,7 @@ body {
 /*
   Range inputs: tall hit target, thin visual track, premium thumb.
   Avoid thumb transform during hover/drag — scale causes WebKit/Safari jitter.
-  Cursor: pointer at rest; grabbing only while actively dragging.
+  Cursor stays pointer (no grab hand) for a consistent, premium feel.
 */
 .tradeoff-slider {
   -webkit-appearance: none;
@@ -265,13 +266,13 @@ body {
   background: color-mix(in srgb, var(--accent) 32%, var(--border));
 }
 
+.tradeoff-decision[data-active="true"] .tradeoff-slider::-moz-range-progress {
+  background: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
 .tradeoff-slider:hover::-webkit-slider-runnable-track,
 .tradeoff-slider:hover::-moz-range-track {
   background: color-mix(in srgb, var(--accent) 28%, var(--border));
-}
-
-.tradeoff-slider:active {
-  cursor: grabbing;
 }
 
 .tradeoff-slider::-webkit-slider-thumb {
@@ -320,7 +321,7 @@ body {
 
 .tradeoff-slider:active::-webkit-slider-thumb,
 .tradeoff-slider:active::-moz-range-thumb {
-  cursor: grabbing;
+  cursor: pointer;
   background: var(--accent-strong);
   transition: none;
   box-shadow:

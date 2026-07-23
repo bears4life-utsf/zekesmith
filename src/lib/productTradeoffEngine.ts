@@ -240,7 +240,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Growing teams, products, and dependencies while maintaining speed, alignment, and effective decision-making.",
     explanation:
-      "As organizations grow, capacity and surface area expand together. The tradeoff is that coordination and decision latency often become the real constraint—speed and alignment compete unless ownership stays clear.",
+      "Growth adds capacity and surface area at the same time. The leadership problem is that coordination and decision latency often become the real constraint—speed and alignment compete unless ownership stays clear.",
     guidance: {
       lens: "Scaling rarely fails from too few people. It fails when growth outruns clear ownership and decision rights.",
       benefits: [
@@ -274,7 +274,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Aligning multiple teams, shared platforms, and complex dependencies without slowing execution.",
     explanation:
-      "Aligning many teams and shared platforms improves predictability. The tradeoff is that planning and governance can slow local decision-making and execution—coordination becomes valuable until it costs more than it returns.",
+      "Shared platforms and dependent teams need alignment to stay predictable. The leadership problem is knowing when planning and governance still reduce risk—and when they start costing more than they return.",
     guidance: {
       lens: "Enterprise coordination pays for itself only while it reduces risk faster than it slows local decisions.",
       benefits: [
@@ -309,7 +309,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Strengthening product, engineering, and design partnerships while increasing ownership, accountability, and customer focus.",
     explanation:
-      "Strengthening product, engineering, and design partnerships increases ownership and customer focus. The tradeoff is less centralized control—and the need to trust teams with real decisions while keeping accountability clear.",
+      "Strong product, engineering, and design partnerships raise ownership and customer focus. The leadership problem is giving teams real decision rights while keeping accountability clear—and accepting less centralized control.",
     guidance: {
       lens: "Empowered product teams trade centralized control for clearer ownership—and only work when accountability travels with the decision rights.",
       benefits: [
@@ -344,7 +344,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Integrating AI into products and ways of working while balancing innovation, governance, and organizational readiness.",
     explanation:
-      "Integrating AI opens innovation and new ways of working. The tradeoff is balancing that upside with governance, readiness, and the uncertainty of unproven bets—confidence lags novelty until evidence catches up.",
+      "AI opens new product capabilities and ways of working. The leadership problem is balancing that upside with governance, readiness, and unproven bets—confidence lags novelty until evidence catches up.",
     guidance: {
       lens: "AI adoption is an innovation and readiness problem first—governance has to protect trust without freezing learning.",
       benefits: [
@@ -378,7 +378,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Improving aging technology, reducing technical debt, and evolving architecture without disrupting customer delivery.",
     explanation:
-      "Improving aging platforms and reducing debt protects future velocity. The tradeoff is less visible customer scope now so architecture can evolve—without dressing infrastructure work up as a customer-facing release.",
+      "Aging platforms and technical debt tax every future release. The leadership problem is trading near-term customer scope for architecture work—without dressing infrastructure up as a customer-facing release.",
     guidance: {
       lens: "Modernization protects future velocity only when leaders treat platform work as a deliberate tradeoff against near-term scope.",
       benefits: [
@@ -412,7 +412,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Expanding into new markets, customers, or products while maintaining focus, execution, and organizational alignment.",
     explanation:
-      "Expanding into new markets or products stretches scope and ambition. The tradeoff is maintaining focus, execution quality, and organizational alignment while the surface area—and delivery pressure—grows.",
+      "New markets, customers, or products stretch ambition and surface area. The leadership problem is keeping focus and execution quality intact while delivery pressure rises with the opportunity.",
     guidance: {
       lens: "Business growth stretches scope and pace together—the leadership problem is keeping focus and execution quality from thinning out.",
       benefits: [
@@ -446,7 +446,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Balancing compliance, governance, and risk management while preserving speed, innovation, and customer responsiveness.",
     explanation:
-      "Compliance and risk management protect trust. The tradeoff is preserving enough speed, innovation, and customer responsiveness that governance does not become the product—quality and predictability are constraints, not preferences.",
+      "Compliance and risk management protect trust. The leadership problem is preserving enough speed and customer responsiveness that governance does not become the product—quality and predictability are constraints, not preferences.",
     guidance: {
       lens: "In regulated environments, quality and predictability are constraints—the challenge is keeping governance from becoming the product.",
       benefits: [
@@ -659,36 +659,47 @@ function topItems(items: WeightedItem[], limit: number): string[] {
 /**
  * Qualitative reflection for the current configuration.
  * Numbers stay under the hood; leaders see tensions, not scores.
- * When inputs match a leadership challenge, challenge-specific guidance
- * is merged in so recommendations feel tailored—not slider-generic only.
+ *
+ * Pass `challengeId` when a leadership challenge is selected so guidance
+ * stays challenge-aware while leaders explore the sliders. Exact input
+ * matches weight challenge copy more heavily; diverged exploration still
+ * keeps the challenge lens, question, and a lighter guidance blend.
  */
 export function getReflection(
   inputs: SliderInputs,
   outputs: EngineOutputs,
+  challengeId?: PresetId | null,
 ): Reflection {
   const { scope, deliverySpeed, qualityBar, teamSize, innovation } = inputs;
   const matchedPresetId = matchPreset(inputs);
-  const matchedPreset = matchedPresetId
-    ? getPresetById(matchedPresetId)
+  const activeChallengeId = challengeId ?? matchedPresetId;
+  const activeChallenge = activeChallengeId
+    ? getPresetById(activeChallengeId)
     : undefined;
+  const exactChallengeMatch =
+    matchedPresetId != null && matchedPresetId === activeChallengeId;
 
   const benefits: WeightedItem[] = [];
   const costs: WeightedItem[] = [];
   const effects: WeightedItem[] = [];
   const questions: WeightedItem[] = [];
 
-  if (matchedPreset) {
-    const { guidance } = matchedPreset;
+  if (activeChallenge) {
+    const { guidance } = activeChallenge;
+    const itemWeight = exactChallengeMatch ? 108 : 72;
     for (const text of guidance.benefits) {
-      benefits.push({ weight: 108, text });
+      benefits.push({ weight: itemWeight, text });
     }
     for (const text of guidance.costs) {
-      costs.push({ weight: 108, text });
+      costs.push({ weight: itemWeight, text });
     }
     for (const text of guidance.organizationalEffects) {
-      effects.push({ weight: 108, text });
+      effects.push({ weight: itemWeight, text });
     }
-    questions.push({ weight: 120, text: guidance.question });
+    questions.push({
+      weight: exactChallengeMatch ? 120 : 105,
+      text: guidance.question,
+    });
   }
 
   if (deliverySpeed > 60) {
@@ -912,10 +923,10 @@ export function getReflection(
     costs: topItems(costs, 4),
     organizationalEffects: topItems(effects, 3),
     question: topItems(questions, 1)[0],
-    ...(matchedPreset
+    ...(activeChallenge
       ? {
-          challengeLabel: matchedPreset.label,
-          challengeLens: matchedPreset.guidance.lens,
+          challengeLabel: activeChallenge.label,
+          challengeLens: activeChallenge.guidance.lens,
         }
       : {}),
   };
