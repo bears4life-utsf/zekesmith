@@ -8,7 +8,7 @@ import { useEnableMotion } from "@/lib/motion";
 
 export function ArticleCard({ article, index }: { article: Article; index: number }) {
   const enableMotion = useEnableMotion();
-  const scenarioLink = scenarioHref(article.relatedScenarioSlug);
+  const challengeLink = scenarioHref(article.relatedScenarioSlug);
 
   return (
     <motion.article
@@ -52,14 +52,14 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
             Explore the related challenge
           </p>
           <a
-            href={scenarioLink}
+            href={challengeLink}
             onClick={(event) => {
               if (typeof window === "undefined") return;
               if (window.location.pathname !== "/" && window.location.pathname !== "") {
                 return;
               }
               event.preventDefault();
-              const url = new URL(scenarioLink, window.location.origin);
+              const url = new URL(challengeLink, window.location.origin);
               window.history.pushState(
                 null,
                 "",

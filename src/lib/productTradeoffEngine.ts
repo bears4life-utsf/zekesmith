@@ -63,6 +63,16 @@ export type PresetTint =
   | "slate"
   | "bronze";
 
+/** Challenge-framed guidance that surfaces when this leadership challenge is active. */
+export type ChallengeGuidance = {
+  /** Short lens shown above recommendations */
+  lens: string;
+  benefits: string[];
+  costs: string[];
+  organizationalEffects: string[];
+  question: string;
+};
+
 export type Preset = {
   id: PresetId;
   /** URL slug for shareable challenge links (`?scenario=` query param) */
@@ -72,6 +82,8 @@ export type Preset = {
   blurb: string;
   /** Miniature case study — why these tradeoffs exist for this challenge */
   explanation: string;
+  /** Tailored guidance for this leadership challenge */
+  guidance: ChallengeGuidance;
   tint: PresetTint;
   inputs: SliderInputs;
   /** Optional essay this challenge deep-links from */
@@ -94,6 +106,10 @@ export type Reflection = {
   organizationalEffects: string[];
   /** Primary leadership question — always present */
   question: string;
+  /** Active leadership challenge label, when inputs match a challenge */
+  challengeLabel?: string;
+  /** Challenge-specific framing for the recommendations column */
+  challengeLens?: string;
 };
 
 /**
@@ -225,6 +241,23 @@ export const PRESETS: Preset[] = [
       "Growing teams, products, and dependencies while maintaining speed, alignment, and effective decision-making.",
     explanation:
       "As organizations grow, capacity and surface area expand together. The tradeoff is that coordination and decision latency often become the real constraint—speed and alignment compete unless ownership stays clear.",
+    guidance: {
+      lens: "Scaling rarely fails from too few people. It fails when growth outruns clear ownership and decision rights.",
+      benefits: [
+        "More parallel capacity as products and teams expand together",
+        "Room to cover specialized skills without starving core delivery",
+      ],
+      costs: [
+        "Coordination and decision latency rising faster than headcount helps",
+        "Alignment tax that quietly slows every cross-team commitment",
+      ],
+      organizationalEffects: [
+        "Meetings and dependency management start to compete with building",
+        "Leaders feel pressure to add process before they clarify ownership",
+      ],
+      question:
+        "If we grew half as fast, what would improve about how decisions get made?",
+    },
     tint: "burgundy",
     inputs: {
       scope: 70,
@@ -242,6 +275,23 @@ export const PRESETS: Preset[] = [
       "Aligning multiple teams, shared platforms, and complex dependencies without slowing execution.",
     explanation:
       "Aligning many teams and shared platforms improves predictability. The tradeoff is that planning and governance can slow local decision-making and execution—coordination becomes valuable until it costs more than it returns.",
+    guidance: {
+      lens: "Enterprise coordination pays for itself only while it reduces risk faster than it slows local decisions.",
+      benefits: [
+        "Stronger predictability across shared platforms and dependent teams",
+        "Clearer enterprise commitments when integration risk is real",
+      ],
+      costs: [
+        "Planning and governance overhead that slows local execution",
+        "Decision rights drifting upward until teams wait instead of ship",
+      ],
+      organizationalEffects: [
+        "Coordination rituals expand until they feel safer than ownership",
+        "Local learning slows because evidence has to travel through the system",
+      ],
+      question:
+        "Where does coordination still create value — and where is it mostly theater?",
+    },
     tint: "navy",
     relatedEssayId: "beyond-safe",
     inputs: {
@@ -260,6 +310,23 @@ export const PRESETS: Preset[] = [
       "Strengthening product, engineering, and design partnerships while increasing ownership, accountability, and customer focus.",
     explanation:
       "Strengthening product, engineering, and design partnerships increases ownership and customer focus. The tradeoff is less centralized control—and the need to trust teams with real decisions while keeping accountability clear.",
+    guidance: {
+      lens: "Empowered product teams trade centralized control for clearer ownership—and only work when accountability travels with the decision rights.",
+      benefits: [
+        "Tighter product, engineering, and design partnership around outcomes",
+        "Faster local decisions when teams own the customer problem",
+      ],
+      costs: [
+        "Less centralized control for leaders used to steering every bet",
+        "Uneven judgment across teams until coaching and standards catch up",
+      ],
+      organizationalEffects: [
+        "Roadmaps become team commitments instead of portfolio theater",
+        "Leaders shift from directing work to clarifying problems and constraints",
+      ],
+      question:
+        "Are teams empowered to decide — or only empowered to execute someone else's plan?",
+    },
     tint: "forest",
     relatedEssayId: "product-operating-model",
     inputs: {
@@ -278,6 +345,23 @@ export const PRESETS: Preset[] = [
       "Integrating AI into products and ways of working while balancing innovation, governance, and organizational readiness.",
     explanation:
       "Integrating AI opens innovation and new ways of working. The tradeoff is balancing that upside with governance, readiness, and the uncertainty of unproven bets—confidence lags novelty until evidence catches up.",
+    guidance: {
+      lens: "AI adoption is an innovation and readiness problem first—governance has to protect trust without freezing learning.",
+      benefits: [
+        "Strategic upside from new product capabilities and ways of working",
+        "Faster learning loops when experiments are bounded and instrumented",
+      ],
+      costs: [
+        "Lower near-term certainty while unproven bets consume attention",
+        "Governance and readiness gaps that turn novelty into operational risk",
+      ],
+      organizationalEffects: [
+        "Teams debate demos more than evidence until measurement catches up",
+        "Leaders feel pressure to declare transformation before the org is ready",
+      ],
+      question:
+        "What evidence would make this AI bet feel grounded rather than fashionable?",
+    },
     tint: "teal",
     inputs: {
       scope: 36,
@@ -295,6 +379,23 @@ export const PRESETS: Preset[] = [
       "Improving aging technology, reducing technical debt, and evolving architecture without disrupting customer delivery.",
     explanation:
       "Improving aging platforms and reducing debt protects future velocity. The tradeoff is less visible customer scope now so architecture can evolve—without dressing infrastructure work up as a customer-facing release.",
+    guidance: {
+      lens: "Modernization protects future velocity only when leaders treat platform work as a deliberate tradeoff against near-term scope.",
+      benefits: [
+        "Lower future delivery tax as aging platforms and debt improve",
+        "More durable quality foundations for the next wave of product work",
+      ],
+      costs: [
+        "Less visible customer scope while architecture absorbs attention",
+        "Stakeholder impatience when progress is real but hard to demo",
+      ],
+      organizationalEffects: [
+        "Roadmaps split between customer promises and invisible enablement",
+        "Teams feel pressure to relabel infrastructure as features",
+      ],
+      question:
+        "What customer outcome are we protecting by modernizing — and how will we know?",
+    },
     tint: "steel",
     inputs: {
       scope: 32,
@@ -312,6 +413,23 @@ export const PRESETS: Preset[] = [
       "Expanding into new markets, customers, or products while maintaining focus, execution, and organizational alignment.",
     explanation:
       "Expanding into new markets or products stretches scope and ambition. The tradeoff is maintaining focus, execution quality, and organizational alignment while the surface area—and delivery pressure—grows.",
+    guidance: {
+      lens: "Business growth stretches scope and pace together—the leadership problem is keeping focus and execution quality from thinning out.",
+      benefits: [
+        "Faster response to market and customer expansion opportunities",
+        "A broader story for sales and stakeholders when ambition is intentional",
+      ],
+      costs: [
+        "Focus diluting as surface area and delivery pressure rise together",
+        "Execution quality thinning when every segment feels urgent",
+      ],
+      organizationalEffects: [
+        "Teams chase breadth while shared standards quietly erode",
+        "Leaders confuse growth activity with durable customer outcomes",
+      ],
+      question:
+        "If we stopped expanding for one quarter, which customers would we serve better?",
+    },
     tint: "forest",
     inputs: {
       scope: 62,
@@ -329,6 +447,23 @@ export const PRESETS: Preset[] = [
       "Balancing compliance, governance, and risk management while preserving speed, innovation, and customer responsiveness.",
     explanation:
       "Compliance and risk management protect trust. The tradeoff is preserving enough speed, innovation, and customer responsiveness that governance does not become the product—quality and predictability are constraints, not preferences.",
+    guidance: {
+      lens: "In regulated environments, quality and predictability are constraints—the challenge is keeping governance from becoming the product.",
+      benefits: [
+        "Stronger trust through deliberate quality, compliance, and risk posture",
+        "More durable predictability when governance is treated as a design input",
+      ],
+      costs: [
+        "Slower experimentation when every change carries approval weight",
+        "Innovation compressed by processes that protect against worst cases",
+      ],
+      organizationalEffects: [
+        "Teams optimize for auditability before customer learning",
+        "Leaders struggle to distinguish necessary control from habitual friction",
+      ],
+      question:
+        "Which controls protect customers — and which ones mostly protect the organization from itself?",
+    },
     tint: "slate",
     inputs: {
       scope: 55,
@@ -524,17 +659,37 @@ function topItems(items: WeightedItem[], limit: number): string[] {
 /**
  * Qualitative reflection for the current configuration.
  * Numbers stay under the hood; leaders see tensions, not scores.
+ * When inputs match a leadership challenge, challenge-specific guidance
+ * is merged in so recommendations feel tailored—not slider-generic only.
  */
 export function getReflection(
   inputs: SliderInputs,
   outputs: EngineOutputs,
 ): Reflection {
   const { scope, deliverySpeed, qualityBar, teamSize, innovation } = inputs;
+  const matchedPresetId = matchPreset(inputs);
+  const matchedPreset = matchedPresetId
+    ? getPresetById(matchedPresetId)
+    : undefined;
 
   const benefits: WeightedItem[] = [];
   const costs: WeightedItem[] = [];
   const effects: WeightedItem[] = [];
   const questions: WeightedItem[] = [];
+
+  if (matchedPreset) {
+    const { guidance } = matchedPreset;
+    for (const text of guidance.benefits) {
+      benefits.push({ weight: 108, text });
+    }
+    for (const text of guidance.costs) {
+      costs.push({ weight: 108, text });
+    }
+    for (const text of guidance.organizationalEffects) {
+      effects.push({ weight: 108, text });
+    }
+    questions.push({ weight: 120, text: guidance.question });
+  }
 
   if (deliverySpeed > 60) {
     benefits.push({
@@ -757,6 +912,12 @@ export function getReflection(
     costs: topItems(costs, 4),
     organizationalEffects: topItems(effects, 3),
     question: topItems(questions, 1)[0],
+    ...(matchedPreset
+      ? {
+          challengeLabel: matchedPreset.label,
+          challengeLens: matchedPreset.guidance.lens,
+        }
+      : {}),
   };
 }
 
