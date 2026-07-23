@@ -104,6 +104,40 @@ body {
   transform: scaleX(1);
 }
 
+.tradeoff-slider {
+  appearance: none;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 85%, transparent);
+  outline: none;
+}
+
+.tradeoff-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: var(--foreground);
+  border: 2px solid var(--background-elevated);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.tradeoff-slider::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: var(--foreground);
+  border: 2px solid var(--background-elevated);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+
+.tradeoff-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

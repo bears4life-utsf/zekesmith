@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   productLeadershipScenarios,
-  simulatorClosingBody,
-  simulatorClosingLead,
+  type ProductLeadershipScenario,
   type ScenarioOptionId,
 } from "@/content/productLeadershipScenarios";
 import { SectionHeading } from "@/components/section-heading";
@@ -18,38 +17,49 @@ function useIsClient() {
   );
 }
 
-function ProgressDots({
-  total,
-  current,
-  enableMotion,
+function getCommentary(
+  value: number,
+  commentary: { left: string; balanced: string; right: string },
+) {
+  if (value < 38) return commentary.left;
+  if (value > 62) return commentary.right;
+  return commentary.balanced;
+}
+
+function TensionMap({
+  scenario,
+  values,
 }: {
-  total: number;
-  current: number;
-  enableMotion: boolean;
+  scenario: ProductLeadershipScenario;
+  values: Record<string, number>;
 }) {
   return (
-    <div
-      className="flex items-center gap-2"
-      role="img"
-      aria-label={`Scenario ${current + 1} of ${total}`}
-    >
-      {Array.from({ length: total }).map((_, index) => {
-        const isActive = index === current;
-        const isComplete = index < current;
-        return (
-          <motion.span
-            key={index}
-            layout={enableMotion}
-            className={`h-1.5 rounded-full transition-colors duration-300 ${
-              isActive
-                ? "w-6 bg-foreground"
-                : isComplete
-                  ? "w-1.5 bg-foreground/45"
-                  : "w-1.5 bg-border"
-            }`}
-          />
-        );
-      })}
+    <div className="rounded-2xl border border-border bg-background p-5 sm:p-6">
+      <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+        Tradeoff map
+      </p>
+      <p className="mt-2 text-sm text-muted">
+        Where your current emphasis sits across the tensions in this decision.
+      </p>
+      <div className="mt-5 space-y-4">
+        {scenario.tradeoffs.map((tradeoff) => {
+          const value = values[tradeoff.id] ?? tradeoff.defaultValue;
+          return (
+            <div key={tradeoff.id}>
+              <div className="mb-2 flex items-center justify-between gap-3 text-xs text-muted">
+                <span>{tradeoff.left}</span>
+                <span>{tradeoff.right}</span>
+              </div>
+              <div className="relative h-2 rounded-full bg-border/70">
+                <div
+                  className="absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border border-foreground/20 bg-foreground shadow-soft transition-[left] duration-300 ease-out"
+                  style={{ left: `calc(${value}% - 0.4375rem)` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -58,52 +68,55 @@ export function ProductLeadershipSimulator() {
   const isClient = useIsClient();
   const reduceMotion = useReducedMotion();
   const enableMotion = isClient && reduceMotion !== true;
-  const [hasStarted, setHasStarted] = useState(false);
-  const [scenarioIndex, setScenarioIndex] = useState(0);
-  const [selectedOptionId, setSelectedOptionId] =
-    useState<ScenarioOptionId | null>(null);
-  const [isComplete, setIsComplete] = useState(false);
 
-  const total = productLeadershipScenarios.length;
-  const scenario = productLeadershipScenarios[scenarioIndex];
-  const selectedOption = scenario?.options.find(
-    (option) => option.id === selectedOptionId,
-  );
-  const preferredOption = scenario?.options.find(
+  const [activeId, setActiveId] = useState(productLeadershipScenarios[0].id);
+  const [exploredOptionId, setExploredOptionId] =
+    useState<ScenarioOptionId | null>(null);
+  const [sliderValues, setSliderValues] = useState<Record<string, number>>(() => {
+    const initial: Record<string, number> = {};
+    for (const scenario of productLeadershipScenarios) {
+      for (const tradeoff of scenario.tradeoffs) {
+        initial[`${scenario.id}:${tradeoff.id}`] = tradeoff.defaultValue;
+      }
+    }
+    return initial;
+  });
+
+  const scenario =
+    productLeadershipScenarios.find((item) => item.id === activeId) ??
+    productLeadershipScenarios[0];
+
+  const currentValues = useMemo(() => {
+    const values: Record<string, number> = {};
+    for (const tradeoff of scenario.tradeoffs) {
+      values[tradeoff.id] =
+        sliderValues[`${scenario.id}:${tradeoff.id}`] ?? tradeoff.defaultValue;
+    }
+    return values;
+  }, [scenario, sliderValues]);
+
+  const preferredOption = scenario.options.find(
     (option) => option.id === scenario.preferredOptionId,
   );
-  const isLastScenario = scenarioIndex === total - 1;
+  const exploredOption = scenario.options.find(
+    (option) => option.id === exploredOptionId,
+  );
 
-  function handleSelect(optionId: ScenarioOptionId) {
-    if (selectedOptionId) return;
-    setSelectedOptionId(optionId);
+  const liveNotes = scenario.tradeoffs.map((tradeoff) =>
+    getCommentary(currentValues[tradeoff.id] ?? 50, tradeoff.commentary),
+  );
+
+  function selectScenario(id: string) {
+    setActiveId(id);
+    setExploredOptionId(null);
   }
 
-  function handleNext() {
-    if (!selectedOptionId) return;
-    if (isLastScenario) {
-      setIsComplete(true);
-      return;
-    }
-    setScenarioIndex((current) => current + 1);
-    setSelectedOptionId(null);
+  function updateSlider(tradeoffId: string, value: number) {
+    setSliderValues((current) => ({
+      ...current,
+      [`${scenario.id}:${tradeoffId}`]: value,
+    }));
   }
-
-  function handleRestart() {
-    setHasStarted(false);
-    setScenarioIndex(0);
-    setSelectedOptionId(null);
-    setIsComplete(false);
-  }
-
-  const fade = enableMotion
-    ? {
-        initial: { opacity: 0, y: 12 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -8 },
-        transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const },
-      }
-    : {};
 
   return (
     <section
@@ -119,283 +132,310 @@ export function ProductLeadershipSimulator() {
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
           <SectionHeading
-            eyebrow="Interactive"
+            eyebrow="Decision lab"
             id="simulator-heading"
             title="How Product Leaders Think"
             description="After nearly three decades building software products, I've learned that the hardest decisions rarely have perfect answers. Explore a few real-world scenarios and see how different tradeoffs shape the outcome."
           />
-          <p className="mt-5 text-sm text-muted">
-            Interactive exercise · About 3 minutes
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted">
+            This is a strategy workbench, not a test. Browse any scenario, move
+            the tensions, and compare approaches — in any order.
           </p>
         </motion.div>
 
-        <div className="mt-14">
-          <AnimatePresence mode="wait">
-            {!hasStarted ? (
-              <motion.div
-                key="intro"
-                {...fade}
-                className="rounded-2xl border border-border bg-background-elevated p-7 shadow-soft sm:p-10"
-              >
-                <p className="max-w-2xl text-pretty text-lg leading-[1.7] text-foreground sm:text-xl">
-                  Most people think product leadership is about roadmaps and
-                  features.
-                </p>
-                <p className="mt-5 max-w-2xl text-pretty text-base leading-[1.7] text-muted sm:text-lg">
-                  In reality, it is usually about navigating tradeoffs:
-                </p>
-                <ul className="mt-5 max-w-2xl space-y-2.5 text-base leading-relaxed text-foreground/90 sm:text-lg">
-                  {[
-                    "Speed versus quality",
-                    "Customers versus strategy",
-                    "Short-term commitments versus long-term health",
-                    "Innovation versus focus",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-                      />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-6 max-w-2xl text-pretty text-base leading-[1.7] text-muted sm:text-lg">
-                  These scenarios are inspired by the kinds of decisions product
-                  teams face every day.
-                </p>
+        <div className="mt-10">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+            Choose a scenario
+          </p>
+          <div
+            className="mt-4 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            role="tablist"
+            aria-label="Product leadership scenarios"
+          >
+            {productLeadershipScenarios.map((item) => {
+              const isActive = item.id === scenario.id;
+              return (
                 <button
+                  key={item.id}
                   type="button"
-                  onClick={() => setHasStarted(true)}
-                  className="mt-8 inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => selectScenario(item.id)}
+                  className={`shrink-0 rounded-full border px-4 py-2 text-sm transition-[border-color,background-color,color] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                    isActive
+                      ? "border-foreground/20 bg-foreground text-background"
+                      : "border-border bg-background-elevated text-muted hover:border-foreground/15 hover:text-foreground"
+                  }`}
                 >
-                  Start exploring
+                  {item.navLabel}
                 </button>
-              </motion.div>
-            ) : isComplete ? (
-              <motion.div
-                key="complete"
-                {...fade}
-                className="rounded-2xl border border-border bg-background-elevated p-7 shadow-soft sm:p-10"
-              >
-                <p className="max-w-2xl text-pretty text-2xl font-medium leading-[1.35] tracking-tight text-foreground sm:text-3xl">
-                  {simulatorClosingLead}
-                </p>
-                <p className="mt-5 max-w-2xl text-pretty text-base leading-[1.7] text-muted sm:text-lg">
-                  {simulatorClosingBody}
-                </p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleRestart}
-                    className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >
-                    Explore again
-                  </button>
-                  <a
-                    href="#writing"
-                    className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-medium text-foreground transition-colors duration-300 hover:border-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >
-                    View my writing
-                  </a>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key={scenario.id}
-                {...fade}
-                className="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft sm:p-8 lg:p-10"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-accent">
-                      {scenario.category}
-                    </p>
-                    <h3 className="mt-3 max-w-2xl text-balance text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
-                      {scenario.title}
-                    </h3>
-                  </div>
-                  <div className="pt-1">
-                    <ProgressDots
-                      total={total}
-                      current={scenarioIndex}
-                      enableMotion={enableMotion}
-                    />
-                    <p className="mt-2 text-right text-xs text-muted">
-                      Scenario {scenarioIndex + 1} of {total}
-                    </p>
-                  </div>
-                </div>
+              );
+            })}
+          </div>
+        </div>
 
-                <div className="mt-6 grid gap-4 rounded-2xl border border-border bg-background p-4 sm:grid-cols-2 sm:gap-6 sm:p-5">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                      Stakeholders
-                    </p>
-                    <ul className="mt-3 space-y-1.5 text-sm text-foreground/90">
-                      {scenario.stakeholders.map((item) => (
-                        <li key={item} className="flex items-center gap-2.5">
-                          <span
-                            aria-hidden="true"
-                            className="h-1 w-1 rounded-full bg-foreground/40"
-                          />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                      Constraints
-                    </p>
-                    <ul className="mt-3 space-y-1.5 text-sm text-foreground/90">
-                      {scenario.constraints.map((item) => (
-                        <li key={item} className="flex items-center gap-2.5">
-                          <span
-                            aria-hidden="true"
-                            className="h-1 w-1 rounded-full bg-foreground/40"
-                          />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={scenario.id}
+            initial={enableMotion ? { opacity: 0, y: 14 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            exit={enableMotion ? { opacity: 0, y: -8 } : undefined}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-8 space-y-6"
+          >
+            <article className="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft sm:p-8 lg:p-10">
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-accent">
+                {scenario.category}
+              </p>
+              <h3 className="mt-3 max-w-3xl text-balance text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
+                {scenario.title}
+              </h3>
+              <p className="mt-5 max-w-3xl text-pretty text-base leading-[1.7] text-muted sm:text-lg">
+                {scenario.situation}
+              </p>
 
-                <p className="mt-6 max-w-3xl text-pretty text-base leading-[1.7] text-muted sm:text-lg">
-                  {scenario.situation}
+              <div className="mt-6 grid gap-4 rounded-2xl border border-border bg-background p-4 sm:grid-cols-2 sm:gap-6 sm:p-5">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+                    Stakeholders
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-sm text-foreground/90">
+                    {scenario.stakeholders.map((item) => (
+                      <li key={item} className="flex items-center gap-2.5">
+                        <span
+                          aria-hidden="true"
+                          className="h-1 w-1 rounded-full bg-foreground/40"
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+                    Constraints
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-sm text-foreground/90">
+                    {scenario.constraints.map((item) => (
+                      <li key={item} className="flex items-center gap-2.5">
+                        <span
+                          aria-hidden="true"
+                          className="h-1 w-1 rounded-full bg-foreground/40"
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft sm:p-8">
+                <h4 className="text-lg font-medium tracking-tight text-foreground">
+                  Work the tensions
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
+                  Move the sliders to feel the competing forces. Nothing is
+                  scored — this is a thinking tool.
                 </p>
 
-                <div className="mt-10 border-t border-border pt-8">
+                <div className="mt-8 space-y-8">
+                  {scenario.tradeoffs.map((tradeoff) => {
+                    const value = currentValues[tradeoff.id] ?? 50;
+                    const note = getCommentary(value, tradeoff.commentary);
+                    return (
+                      <div key={tradeoff.id}>
+                        <div className="flex items-center justify-between gap-4 text-sm text-foreground">
+                          <span>{tradeoff.left}</span>
+                          <span className="text-right">{tradeoff.right}</span>
+                        </div>
+                        <label className="sr-only" htmlFor={`${scenario.id}-${tradeoff.id}`}>
+                          Balance {tradeoff.left} and {tradeoff.right}
+                        </label>
+                        <input
+                          id={`${scenario.id}-${tradeoff.id}`}
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={value}
+                          onChange={(event) =>
+                            updateSlider(tradeoff.id, Number(event.target.value))
+                          }
+                          className="tradeoff-slider mt-4 w-full"
+                        />
+                        <p className="mt-3 text-sm leading-relaxed text-muted">
+                          {note}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-border bg-background p-4 sm:p-5">
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                    Current emphasis
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {liveNotes.map((note) => (
+                      <li
+                        key={note}
+                        className="flex items-start gap-2.5 text-sm leading-relaxed text-muted"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent"
+                        />
+                        {note}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <TensionMap scenario={scenario} values={currentValues} />
+
+                <div className="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft sm:p-7">
                   <h4 className="text-lg font-medium tracking-tight text-foreground">
-                    What would you do?
+                    How I think about this
                   </h4>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
-                    Choose a response to reveal the tradeoffs and compare your
-                    instincts with mine.
+                  <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
+                    {scenario.myApproach}
                   </p>
 
-                  <fieldset className="mt-6 border-0 p-0">
-                    <legend className="sr-only">
-                      Choose a response for {scenario.title}
-                    </legend>
-                    <div
-                      className="grid gap-3"
-                      role="radiogroup"
-                      aria-label="Response options"
-                    >
-                      {scenario.options.map((option) => {
-                        const isSelected = selectedOptionId === option.id;
-                        const isMuted =
-                          selectedOptionId !== null && !isSelected;
-
-                        return (
-                          <button
-                            key={option.id}
-                            type="button"
-                            role="radio"
-                            aria-checked={isSelected}
-                            aria-disabled={selectedOptionId !== null}
-                            disabled={selectedOptionId !== null}
-                            onClick={() => handleSelect(option.id)}
-                            className={`group/option rounded-2xl border px-4 py-4 text-left transition-[border-color,background-color,box-shadow,transform,opacity] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5 ${
-                              isSelected
-                                ? "border-foreground/30 bg-accent-soft shadow-soft"
-                                : isMuted
-                                  ? "border-border/70 bg-background opacity-50"
-                                  : "border-border bg-background hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-soft motion-reduce:hover:translate-y-0"
-                            } disabled:cursor-default`}
-                          >
-                            <span className="inline-flex rounded-full border border-border bg-background-elevated px-2.5 py-1 text-[11px] font-medium tracking-wide text-muted">
-                              {option.lens}
-                            </span>
-                            <span className="mt-3 block text-sm leading-relaxed text-foreground sm:text-base">
-                              {option.label}
-                            </span>
-                          </button>
-                        );
-                      })}
+                  <div className="mt-6 space-y-5 border-t border-border pt-6">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                        What I optimize for
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                        {scenario.thinking.optimizeFor}
+                      </p>
                     </div>
-                  </fieldset>
-                </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                        What concerns me most
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                        {scenario.thinking.concerns}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                        Key principle
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground">
+                        “{scenario.thinking.keyPrinciple}”
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                        Common mistake
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                        {scenario.thinking.commonMistake}
+                      </p>
+                    </div>
+                  </div>
 
-                <AnimatePresence>
-                  {selectedOption && preferredOption ? (
-                    <motion.div
-                      key={`${scenario.id}-${selectedOption.id}-analysis`}
-                      initial={enableMotion ? { opacity: 0, y: 12 } : false}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.35,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      className="mt-8 space-y-7 rounded-2xl border border-border bg-background p-5 sm:p-7"
-                      aria-live="polite"
+                  {preferredOption ? (
+                    <p className="mt-6 border-t border-border pt-5 text-sm leading-relaxed text-muted">
+                      In this case, I tend toward{" "}
+                      <span className="text-foreground">
+                        {preferredOption.lens.toLowerCase()}
+                      </span>
+                      : {preferredOption.label}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft sm:p-8">
+              <h4 className="text-lg font-medium tracking-tight text-foreground">
+                Alternative paths worth examining
+              </h4>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
+                These are not answers to grade. They are lenses. Open any one to
+                inspect the upside and risk.
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                {scenario.options.map((option) => {
+                  const isOpen = exploredOptionId === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      aria-expanded={isOpen}
+                      onClick={() =>
+                        setExploredOptionId(isOpen ? null : option.id)
+                      }
+                      className={`rounded-2xl border px-4 py-4 text-left transition-[border-color,background-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5 ${
+                        isOpen
+                          ? "border-foreground/25 bg-accent-soft shadow-soft"
+                          : "border-border bg-background hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-soft motion-reduce:hover:translate-y-0"
+                      }`}
                     >
+                      <span className="inline-flex rounded-full border border-border bg-background-elevated px-2.5 py-1 text-[11px] font-medium tracking-wide text-muted">
+                        {option.lens}
+                      </span>
+                      <span className="mt-3 block text-sm leading-relaxed text-foreground sm:text-base">
+                        {option.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <AnimatePresence>
+                {exploredOption ? (
+                  <motion.div
+                    key={`${scenario.id}-${exploredOption.id}`}
+                    initial={enableMotion ? { opacity: 0, y: 10 } : false}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={enableMotion ? { opacity: 0, y: -6 } : undefined}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-6 space-y-5 rounded-2xl border border-border bg-background p-5 sm:p-6"
+                    aria-live="polite"
+                  >
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                        Tradeoff view
+                      </p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+                        {exploredOption.analysis}
+                      </p>
+                    </div>
+                    <div className="grid gap-5 sm:grid-cols-2">
                       <div>
                         <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                          Your choice
+                          Likely upside
                         </p>
-                        <p className="mt-2 text-sm font-medium leading-relaxed text-foreground sm:text-base">
-                          {selectedOption.lens} — {selectedOption.label}
-                        </p>
-                        <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-                          {selectedOption.analysis}
+                        <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
+                          {exploredOption.upside}
                         </p>
                       </div>
-
-                      <div className="grid gap-6 sm:grid-cols-2">
-                        <div>
-                          <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                            Likely upside
-                          </p>
-                          <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
-                            {selectedOption.upside}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                            Primary risk
-                          </p>
-                          <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
-                            {selectedOption.risk}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="border-t border-border pt-6">
+                      <div>
                         <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                          How I would think about it
+                          Primary risk
                         </p>
-                        <p className="mt-2 text-sm font-medium leading-relaxed text-foreground sm:text-base">
-                          {preferredOption.lens} — {preferredOption.label}
-                        </p>
-                        <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-                          {scenario.myApproach}
-                        </p>
-                        <p className="mt-5 text-sm leading-relaxed text-muted sm:text-base">
-                          Strong product leadership is rarely about finding the
-                          perfect answer. Context matters.
+                        <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
+                          {exploredOption.risk}
                         </p>
                       </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={!selectedOptionId}
-                    className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-35"
-                  >
-                    {isLastScenario ? "Finish" : "Next scenario"}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                    </div>
+                    <p className="border-t border-border pt-5 text-sm leading-relaxed text-muted">
+                      Strong product leadership is rarely about finding the
+                      perfect answer. Context matters.
+                    </p>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );
