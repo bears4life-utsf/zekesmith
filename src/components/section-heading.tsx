@@ -3,14 +3,16 @@ export function SectionHeading({
   title,
   description,
   id,
+  className,
 }: {
   eyebrow: string;
   title: string;
   description?: string;
   id?: string;
+  className?: string;
 }) {
   return (
-    <div className="max-w-2xl">
+    <div className={className ?? "max-w-2xl"}>
       <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
         {eyebrow}
       </p>

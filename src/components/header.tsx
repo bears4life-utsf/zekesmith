@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { site } from "@/content/site";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -18,7 +18,40 @@ function getScrolledServer() {
 }
 
 export function Header() {
-  const scrolled = useSyncExternalStore(subscribeScroll, getScrolled, getScrolledServer);
+  const scrolled = useSyncExternalStore(
+    subscribeScroll,
+    getScrolled,
+    getScrolledServer,
+  );
+  const [activeHref, setActiveHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ids = site.nav.map((item) => item.href.replace("#", ""));
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]?.target.id) {
+          setActiveHref(`#${visible[0].target.id}`);
+        }
+      },
+      {
+        rootMargin: "-28% 0px -55% 0px",
+        threshold: [0.1, 0.25, 0.5],
+      },
+    );
+
+    for (const element of elements) observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <header
@@ -41,7 +74,8 @@ export function Header() {
             <a
               key={item.href}
               href={item.href}
-              className="nav-link text-sm text-muted transition-colors duration-300 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              data-active={activeHref === item.href}
+              className="nav-link text-sm text-muted transition-colors duration-300 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               {item.label}
             </a>
@@ -54,7 +88,8 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-xs text-muted transition-colors hover:text-foreground"
+                data-active={activeHref === item.href}
+                className="text-xs text-muted transition-colors hover:text-accent data-[active=true]:text-accent"
               >
                 {item.label}
               </a>

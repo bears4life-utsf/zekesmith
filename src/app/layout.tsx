@@ -29,12 +29,13 @@ export const metadata: Metadata = {
   creator: site.name,
   keywords: [
     "Zeke S. Smith",
-    "product management",
+    "product leadership",
+    "product tradeoffs",
+    "systems thinking",
     "AI",
     "software",
     "UX",
     "product strategy",
-    "building",
   ],
   openGraph: {
     type: "website",

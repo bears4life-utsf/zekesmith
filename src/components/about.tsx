@@ -15,7 +15,19 @@ export function About() {
       className="scroll-mt-24 border-t border-border"
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 sm:py-28">
-        <div className="grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <motion.blockquote
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-3xl border-l border-accent/40 pl-5 sm:pl-6"
+        >
+          <p className="font-serif text-2xl leading-snug tracking-tight text-foreground sm:text-3xl sm:leading-snug">
+            {site.about.pullQuote}
+          </p>
+        </motion.blockquote>
+
+        <div className="mt-14 grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -38,11 +50,13 @@ export function About() {
               <SectionHeading
                 eyebrow="About"
                 id="about-heading"
-                title="Product leadership, builder instincts"
+                title={site.about.title}
               />
-              <p className="mt-8 max-w-xl text-pretty text-base leading-[1.7] text-muted sm:text-lg sm:leading-[1.7]">
-                {site.about.bio}
-              </p>
+              <div className="mt-8 max-w-xl space-y-5 text-pretty text-base leading-[1.7] text-muted sm:text-lg sm:leading-[1.7]">
+                {site.about.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
             </div>
           </motion.div>
 
@@ -50,13 +64,17 @@ export function About() {
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.45, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-3xl border border-border bg-background-elevated p-7 shadow-soft sm:p-8"
+            transition={{
+              duration: 0.45,
+              delay: 0.06,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="lg:pt-2"
           >
             <h3 className="text-sm font-medium uppercase tracking-[0.18em] text-accent">
-              Current interests
+              Current curiosities
             </h3>
-            <ul className="mt-6 space-y-3">
+            <ul className="mt-6 space-y-3 border-t border-border pt-6">
               {site.about.interests.map((interest) => (
                 <li
                   key={interest}

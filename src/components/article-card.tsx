@@ -8,11 +8,12 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
 
   return (
     <motion.article
+      id={article.id}
       initial={reduceMotion ? false : { opacity: 0, y: 20 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      className="group overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-foreground/12 hover:shadow-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="group scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-foreground/12 hover:shadow-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-[#efeee9]">
         <div
