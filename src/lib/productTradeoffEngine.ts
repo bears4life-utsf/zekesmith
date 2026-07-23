@@ -80,7 +80,7 @@ export type Preset = {
   label: string;
   /** One-line chip hint */
   blurb: string;
-  /** Miniature case study — why these tradeoffs exist for this challenge */
+  /** Why this challenge is difficult, why leaders struggle, and what the model explores */
   explanation: string;
   /** Tailored guidance for this leadership challenge */
   guidance: ChallengeGuidance;
@@ -240,7 +240,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Growing teams, products, and dependencies while maintaining speed, alignment, and effective decision-making.",
     explanation:
-      "Growth adds capacity and surface area at the same time. The leadership problem is that coordination and decision latency often become the real constraint—speed and alignment compete unless ownership stays clear.",
+      "Growing teams and products expands capacity—but also coordination surface. Speed and alignment start to compete: more people can mean slower decisions unless ownership stays clear. Leaders often add process or headcount before clarifying who decides.\n\nThis model explores how growth, team size, and delivery pressure trade off as the organization scales.",
     guidance: {
       lens: "Scaling rarely fails from too few people. It fails when growth outruns clear ownership and decision rights.",
       benefits: [
@@ -274,7 +274,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Aligning multiple teams, shared platforms, and complex dependencies without slowing execution.",
     explanation:
-      "Shared platforms and dependent teams need alignment to stay predictable. The leadership problem is knowing when planning and governance still reduce risk—and when they start costing more than they return.",
+      "Multiple teams and shared platforms need enough alignment to stay predictable—yet every planning ritual and governance layer can slow the work it was meant to protect. Leaders struggle to tell when coordination still reduces risk and when it has become theater.\n\nThis model explores the tradeoffs between enterprise predictability and local execution speed.",
     guidance: {
       lens: "Enterprise coordination pays for itself only while it reduces risk faster than it slows local decisions.",
       benefits: [
@@ -309,7 +309,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Strengthening product, engineering, and design partnerships while increasing ownership, accountability, and customer focus.",
     explanation:
-      "Strong product, engineering, and design partnerships raise ownership and customer focus. The leadership problem is giving teams real decision rights while keeping accountability clear—and accepting less centralized control.",
+      "Strong product, engineering, and design partnerships raise ownership and customer focus—but only when teams hold real decision rights, not just execution tasks. Leaders often keep control while calling it empowerment, then wonder why accountability never sticks.\n\nThis model explores what shifts when ownership, quality, and autonomy move closer to the team.",
     guidance: {
       lens: "Empowered product teams trade centralized control for clearer ownership—and only work when accountability travels with the decision rights.",
       benefits: [
@@ -344,7 +344,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Integrating AI into products and ways of working while balancing innovation, governance, and organizational readiness.",
     explanation:
-      "AI opens new product capabilities and ways of working. The leadership problem is balancing that upside with governance, readiness, and unproven bets—confidence lags novelty until evidence catches up.",
+      "AI opens new capabilities and ways of working—but confidence usually lags novelty. Governance, readiness, and unproven bets compete for attention at once. Leaders feel pressure to declare transformation before the organization can absorb it.\n\nThis model explores how innovation, quality, and delivery pace trade off as AI enters the product and the operating model.",
     guidance: {
       lens: "AI adoption is an innovation and readiness problem first—governance has to protect trust without freezing learning.",
       benefits: [
@@ -378,7 +378,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Improving aging technology, reducing technical debt, and evolving architecture without disrupting customer delivery.",
     explanation:
-      "Aging platforms and technical debt tax every future release. The leadership problem is trading near-term customer scope for architecture work—without dressing infrastructure up as a customer-facing release.",
+      "Aging platforms and technical debt tax every future release. The hard part is trading visible customer scope for architecture work stakeholders struggle to see. Leaders often delay until delivery pain is acute—or dress infrastructure up as a feature.\n\nThis model explores the tradeoffs between near-term scope, quality foundations, and future velocity.",
     guidance: {
       lens: "Modernization protects future velocity only when leaders treat platform work as a deliberate tradeoff against near-term scope.",
       benefits: [
@@ -412,7 +412,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Expanding into new markets, customers, or products while maintaining focus, execution, and organizational alignment.",
     explanation:
-      "New markets, customers, or products stretch ambition and surface area. The leadership problem is keeping focus and execution quality intact while delivery pressure rises with the opportunity.",
+      "Expanding into new markets, customers, or products creates opportunity—but also complexity. Leaders must balance growth with focus, execution quality, and organizational alignment.\n\nThis model explores how leadership priorities shift as organizations grow and the tradeoffs that emerge along the way.",
     guidance: {
       lens: "Business growth stretches scope and pace together—the leadership problem is keeping focus and execution quality from thinning out.",
       benefits: [
@@ -446,7 +446,7 @@ export const PRESETS: Preset[] = [
     blurb:
       "Balancing compliance, governance, and risk management while preserving speed, innovation, and customer responsiveness.",
     explanation:
-      "Compliance and risk management protect trust. The leadership problem is preserving enough speed and customer responsiveness that governance does not become the product—quality and predictability are constraints, not preferences.",
+      "Compliance and risk management protect trust—but they also compress experimentation. The hard part is preserving enough speed and customer responsiveness that governance does not become the product. Leaders struggle to distinguish necessary control from habitual friction.\n\nThis model explores how quality, predictability, and innovation trade off when regulation is a real constraint.",
     guidance: {
       lens: "In regulated environments, quality and predictability are constraints—the challenge is keeping governance from becoming the product.",
       benefits: [
@@ -971,15 +971,4 @@ export const PRINCIPLE_TINT_VAR: Record<PrincipleTint, string> = {
   rust: "var(--signal-stress)",
   teal: "var(--tint-teal)",
   forest: "var(--accent)",
-};
-
-export const PRESET_TINT_VAR: Record<PresetTint, string> = {
-  amber: "var(--tint-amber)",
-  navy: "var(--tint-navy)",
-  teal: "var(--tint-teal)",
-  burgundy: "var(--tint-burgundy)",
-  steel: "var(--tint-steel)",
-  forest: "var(--accent)",
-  slate: "var(--signal-uncertain)",
-  bronze: "var(--signal-debt)",
 };
