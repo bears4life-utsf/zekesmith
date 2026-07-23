@@ -1,13 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { articles } from "@/content/articles";
 import { ArticleCard } from "@/components/article-card";
 import { SectionHeading } from "@/components/section-heading";
 import { site } from "@/content/site";
+import { useEnableMotion } from "@/lib/motion";
 
 export function Writing() {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
 
   return (
     <section
@@ -17,8 +18,8 @@ export function Writing() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 pb-10 pt-20 sm:px-8 sm:pb-12 sm:pt-28">
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          initial={enableMotion ? { opacity: 1, y: 14 } : false}
+          whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"

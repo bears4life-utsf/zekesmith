@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { site } from "@/content/site";
 import { SectionHeading } from "@/components/section-heading";
+import { useEnableMotion } from "@/lib/motion";
 
 export function About() {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
 
   return (
     <section
@@ -16,8 +17,8 @@ export function About() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-28 sm:px-8 sm:py-32">
         <motion.blockquote
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          initial={enableMotion ? { opacity: 1, y: 12 } : false}
+          whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl border-l border-accent/40 pl-5 sm:pl-6"
@@ -29,8 +30,8 @@ export function About() {
 
         <div className="mt-16 grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            initial={enableMotion ? { opacity: 1, y: 14 } : false}
+            whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10"
@@ -61,8 +62,8 @@ export function About() {
           </motion.div>
 
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            initial={enableMotion ? { opacity: 1, y: 14 } : false}
+            whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
             viewport={{ once: true, margin: "-40px" }}
             transition={{
               duration: 0.45,

@@ -1,19 +1,20 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Article } from "@/content/articles";
 import { ArticleIllustration } from "@/components/article-illustrations";
 import { scenarioHref } from "@/lib/productTradeoffEngine";
+import { useEnableMotion } from "@/lib/motion";
 
 export function ArticleCard({ article, index }: { article: Article; index: number }) {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
   const scenarioLink = scenarioHref(article.relatedScenarioSlug);
 
   return (
     <motion.article
       id={article.id}
-      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      initial={enableMotion ? { opacity: 1, y: 16 } : false}
+      whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       className="group scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-soft transition-[border-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-foreground/12 hover:shadow-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"

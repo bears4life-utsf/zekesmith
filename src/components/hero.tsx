@@ -1,17 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { site } from "@/content/site";
+import { useEnableMotion } from "@/lib/motion";
 
 export function Hero() {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
   useEffect(() => {
-    const ids = site.hero.exploring.items.map((item) =>
-      item.href.replace("#", ""),
-    );
+    const ids = site.hero.exploring.items
+      .map((item) => {
+        const hash = item.href.includes("#")
+          ? item.href.slice(item.href.indexOf("#") + 1)
+          : item.href.replace(/^#/, "");
+        return hash.split(/[/?]/)[0];
+      })
+      .filter(Boolean);
     const elements = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => Boolean(el));
@@ -38,18 +44,18 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  const fadeUp = (delay = 0) =>
-    reduceMotion
-      ? {}
-      : {
-          initial: { opacity: 0, y: 18 },
-          animate: { opacity: 1, y: 0 },
-          transition: {
-            duration: 0.65,
-            delay,
-            ease: [0.22, 1, 0.36, 1] as const,
-          },
-        };
+  // Never SSR with opacity: 0 — if animate never fires, content stays readable.
+  const fadeUp = (delay = 0) => ({
+    initial: enableMotion ? { opacity: 1, y: 14 } : false,
+    animate: { opacity: 1, y: 0 },
+    transition: enableMotion
+      ? {
+          duration: 0.55,
+          delay,
+          ease: [0.22, 1, 0.36, 1] as const,
+        }
+      : { duration: 0 },
+  });
 
   return (
     <section
@@ -126,18 +132,23 @@ export function Hero() {
                 {site.hero.exploring.title}
               </p>
               <ul className="mt-5 space-y-1">
-                {site.hero.exploring.items.map((item) => (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      data-active={activeHref === item.href}
-                      /* Default ~AA body contrast; active adds accent + wash (not color-only). */
-                      className="exploring-item block rounded-md px-2 py-1.5 text-sm leading-snug text-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
+                {site.hero.exploring.items.map((item) => {
+                  const hashHref = item.href.includes("#")
+                    ? `#${item.href.slice(item.href.indexOf("#") + 1)}`
+                    : item.href;
+                  return (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        data-active={activeHref === hashHref}
+                        /* Default ~AA body contrast; active adds accent + wash (not color-only). */
+                        className="exploring-item block rounded-md px-2 py-1.5 text-sm leading-snug text-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </motion.aside>
