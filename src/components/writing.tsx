@@ -15,28 +15,26 @@ export function Writing() {
       aria-labelledby="writing-heading"
       className="scroll-mt-24"
     >
-      <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+      <div className="mx-auto w-full max-w-6xl px-5 pb-10 pt-20 sm:px-8 sm:pb-12 sm:pt-28">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 16 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-end lg:gap-16"
+          className="max-w-2xl"
         >
           <SectionHeading
             eyebrow="Writing"
             id="writing-heading"
-            title="Where the thinking continues"
-            description="Some of these ideas eventually become essays about product, AI, leadership, and how software actually gets made."
+            title="How I explain the thinking"
+            description="Essays that pressure-test the same ideas — frameworks, operating models, and the tradeoffs that shape how software gets made."
           />
-          <aside className="hidden border-t border-border pt-4 lg:block">
-            <p className="text-sm leading-relaxed text-muted">
-              {site.writing.aside}
-            </p>
-          </aside>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted/90">
+            {site.writing.aside}
+          </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-8 sm:grid-cols-2 sm:gap-7 lg:max-w-4xl">
           {articles.map((article, index) => (
             <ArticleCard key={article.id} article={article} index={index} />
           ))}

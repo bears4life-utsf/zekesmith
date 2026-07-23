@@ -12,9 +12,9 @@ export function About() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="scroll-mt-24 border-t border-border"
+      className="scroll-mt-24 border-t border-border bg-[color-mix(in_srgb,var(--background-elevated)_40%,var(--background))]"
     >
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 sm:py-28">
+      <div className="mx-auto w-full max-w-6xl px-5 py-28 sm:px-8 sm:py-32">
         <motion.blockquote
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -27,7 +27,7 @@ export function About() {
           </p>
         </motion.blockquote>
 
-        <div className="mt-14 grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <div className="mt-16 grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}

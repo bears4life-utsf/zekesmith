@@ -61,21 +61,23 @@ export function Hero() {
       <div className="hero-grid absolute inset-0 -z-10" aria-hidden="true" />
 
       <div className="mx-auto w-full max-w-6xl px-5 pt-32 sm:px-8 lg:pt-36">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_15.5rem] lg:gap-16">
-          <div className="max-w-3xl">
-            <motion.div {...fadeUp(0)}>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
-                {site.hero.masthead.name}
-              </p>
-              <p className="mt-2 text-sm text-muted/80">
-                {site.hero.masthead.roles}
-              </p>
-            </motion.div>
+        {/* Masthead sits above the grid so the aside can align with the H1, not this block. */}
+        <motion.div {...fadeUp(0)} className="max-w-3xl">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
+            {site.hero.masthead.name}
+          </p>
+          <p className="mt-2 text-sm text-muted/80">
+            {site.hero.masthead.roles}
+          </p>
+        </motion.div>
 
+        {/* Grid starts at H1 row — aside border-l shares that top edge. */}
+        <div className="mt-8 grid items-start gap-12 sm:mt-9 lg:grid-cols-[minmax(0,1fr)_15.5rem] lg:gap-16">
+          <div className="max-w-3xl">
             <motion.h1
               id="hero-heading"
               {...fadeUp(0.08)}
-              className="mt-8 text-balance text-4xl font-medium leading-[1.12] tracking-tight text-foreground sm:mt-9 sm:text-5xl lg:text-[3.15rem]"
+              className="text-balance text-4xl font-medium leading-[1.12] tracking-tight text-foreground sm:text-5xl lg:text-[3.15rem]"
             >
               {site.hero.headline}
             </motion.h1>
@@ -95,7 +97,7 @@ export function Hero() {
                 href="#tradeoffs"
                 className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 ease-out hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                Explore the Tradeoff Engine
+                Explore the mental model
               </a>
               <a
                 href="#writing"
@@ -105,9 +107,10 @@ export function Hero() {
               </a>
             </motion.div>
 
+            {/* Tighter CTA→subtext gap; slightly stronger muted so it stays readable but secondary. */}
             <motion.p
               {...fadeUp(0.3)}
-              className="mt-6 max-w-xl text-sm leading-relaxed text-muted/70"
+              className="mt-3 max-w-xl text-sm leading-relaxed text-muted/85 sm:mt-4"
             >
               {site.hero.credibility}
             </motion.p>
@@ -115,7 +118,7 @@ export function Hero() {
 
           <motion.aside
             {...fadeUp(0.2)}
-            className="hidden lg:block lg:pt-1"
+            className="hidden lg:block"
             aria-label={site.hero.exploring.title}
           >
             <div className="border-l border-accent/35 pl-6">
@@ -128,7 +131,8 @@ export function Hero() {
                     <a
                       href={item.href}
                       data-active={activeHref === item.href}
-                      className="exploring-item block rounded-md px-2 py-1.5 text-sm leading-snug text-foreground/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                      /* Default ~AA body contrast; active adds accent + wash (not color-only). */
+                      className="exploring-item block rounded-md px-2 py-1.5 text-sm leading-snug text-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
                       {item.label}
                     </a>

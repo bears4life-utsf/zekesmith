@@ -1,10 +1,12 @@
 /**
- * Product Tradeoff Engine — simulation model
+ * Product Tradeoff Engine — interactive mental model
  *
- * Separated from the UI so relationships can be tuned independently.
- * Values are 0–100. The model is intentionally approximate: it mirrors
- * how experienced product leaders reason about constraints, not a formula
- * that claims scientific precision.
+ * This is not a calculator, prediction engine, or claim of universal truth.
+ * It encodes how one experienced product leader reasons about the
+ * leadership decisions that shape software products and organizations.
+ *
+ * Numeric relationships are intentionally approximate. They exist to make
+ * tensions visible — not to score organizations or prescribe answers.
  */
 
 export type SliderId =
@@ -27,44 +29,56 @@ export type OutputId =
 export type SliderInputs = Record<SliderId, number>;
 export type EngineOutputs = Record<OutputId, number>;
 
+export type SliderContext = {
+  whyLeadersIncrease: string[];
+  whatOftenChanges: string[];
+  leadershipQuestion: string;
+};
+
 export type SliderDefinition = {
   id: SliderId;
   label: string;
   left: string;
   right: string;
   represents: string;
-};
-
-export type OutputGroup = "outcomes" | "costs";
-
-export type OutputDefinition = {
-  id: OutputId;
-  label: string;
-  /** Outcomes are gains; costs are pressures the system absorbs. */
-  group: OutputGroup;
-  /**
-   * Category color — communicates family (outcome vs cost emotion),
-   * not success or failure.
-   */
-  signal: "calm" | "caution" | "stress" | "uncertain" | "debt" | "neutral";
-  format: (value: number) => string;
+  context: SliderContext;
 };
 
 export type PresetId =
-  | "startupMvp"
+  | "startup"
   | "enterprisePlatform"
-  | "aiExperiment"
-  | "customerCommitment"
-  | "technicalModernization";
+  | "aiTransformation"
+  | "platformModernization"
+  | "technicalDebtReduction"
+  | "growthAtScale"
+  | "regulatedEnterprise"
+  | "customerExpansion"
+  | "enterpriseCoordination"
+  | "empoweredProductTeams";
 
-export type PresetTint = "amber" | "navy" | "teal" | "burgundy" | "steel";
+export type PresetTint =
+  | "amber"
+  | "navy"
+  | "teal"
+  | "burgundy"
+  | "steel"
+  | "forest"
+  | "slate"
+  | "bronze";
 
 export type Preset = {
   id: PresetId;
+  /** URL slug for shareable scenario links */
+  slug: string;
   label: string;
+  /** One-line chip hint */
   blurb: string;
+  /** Miniature case study — why these tradeoffs exist */
+  explanation: string;
   tint: PresetTint;
   inputs: SliderInputs;
+  /** Optional essay this scenario deep-links from */
+  relatedEssayId?: string;
 };
 
 export type PrincipleTint = "slate" | "bronze" | "rust" | "teal" | "forest";
@@ -77,191 +91,125 @@ export type Principle = {
   tint: PrincipleTint;
 };
 
+export type Reflection = {
+  benefits: string[];
+  costs: string[];
+  organizationalEffects: string[];
+  /** Primary leadership question — always present */
+  question: string;
+};
+
+/**
+ * Would an experienced VP of Product regularly think about this tradeoff?
+ * Kept only the five that survive that test. Completeness is not the goal.
+ */
 export const SLIDER_DEFINITIONS: SliderDefinition[] = [
   {
     id: "scope",
     label: "Scope",
-    left: "Small release",
-    right: "Large release",
-    represents: "Feature count, breadth, and ambition",
+    left: "Narrow",
+    right: "Broad",
+    represents: "How much surface area the product tries to cover",
+    context: {
+      whyLeadersIncrease: [
+        "Cover more customer jobs in a single release",
+        "Match competitor breadth or contractual commitments",
+        "Give sales and stakeholders a larger story to tell",
+      ],
+      whatOftenChanges: [
+        "Engineering complexity rises",
+        "Ownership boundaries blur",
+        "Delivery predictability thins",
+      ],
+      leadershipQuestion:
+        "If we cut scope by a third, what would get better for the customer?",
+    },
   },
   {
     id: "deliverySpeed",
     label: "Delivery Speed",
     left: "Deliberate",
     right: "Aggressive",
-    represents: "Launch pressure, deadlines, and urgency",
+    represents: "How hard the organization presses for time-to-market",
+    context: {
+      whyLeadersIncrease: [
+        "Respond faster to customers and competitors",
+        "Validate ideas sooner",
+        "Reduce time to market on a known bet",
+      ],
+      whatOftenChanges: [
+        "Technical debt accumulates",
+        "Predictability softens",
+        "Engineering pressure rises",
+      ],
+      leadershipQuestion:
+        "If we slowed down slightly, what would improve?",
+    },
   },
   {
     id: "qualityBar",
     label: "Quality Bar",
     left: "Prototype",
-    right: "Highly polished",
-    represents: "Testing, reliability, and UX quality",
+    right: "Polished",
+    represents: "How much craft, reliability, and UX finish you insist on",
+    context: {
+      whyLeadersIncrease: [
+        "Protect trust in high-stakes or regulated contexts",
+        "Reduce support load and operational risk",
+        "Differentiate through craft and reliability",
+      ],
+      whatOftenChanges: [
+        "Timelines extend",
+        "Experimentation slows",
+        "Teams debate definition of done more often",
+      ],
+      leadershipQuestion:
+        "Are we polishing because customers need it — or because we are uncomfortable shipping?",
+    },
   },
   {
     id: "teamSize",
     label: "Team Size",
     left: "Small team",
     right: "Large organization",
-    represents: "Engineering capacity and coordination complexity",
+    represents: "Capacity versus coordination cost",
+    context: {
+      whyLeadersIncrease: [
+        "Add parallel capacity for a large surface area",
+        "Cover specialized skills the current team lacks",
+        "Absorb growth without abandoning commitments",
+      ],
+      whatOftenChanges: [
+        "Coordination overhead grows",
+        "Decision latency increases",
+        "Clear ownership becomes harder to maintain",
+      ],
+      leadershipQuestion:
+        "Are we adding people because the work needs them — or because the system cannot decide?",
+    },
   },
   {
     id: "innovation",
     label: "Innovation",
     left: "Incremental",
     right: "Experimental",
-    represents: "Novelty, uncertainty, and product risk",
+    represents: "How much novelty and uncertainty you deliberately take on",
+    context: {
+      whyLeadersIncrease: [
+        "Open new strategic upside",
+        "Learn where the market is moving",
+        "Avoid optimizing a product that is quietly obsolete",
+      ],
+      whatOftenChanges: [
+        "Certainty drops",
+        "Delivery predictability weakens",
+        "Learning loops become more important than plans",
+      ],
+      leadershipQuestion:
+        "What evidence would make us more confident — and how quickly can we get it?",
+    },
   },
 ];
-
-function timelineLabel(value: number) {
-  if (value < 28) return "Near-term";
-  if (value < 48) return "Measured";
-  if (value < 68) return "Extended";
-  if (value < 85) return "Long-haul";
-  return "Indeterminate";
-}
-
-function intensityLabel(value: number) {
-  if (value < 22) return "Low";
-  if (value < 42) return "Moderate";
-  if (value < 62) return "Elevated";
-  if (value < 82) return "High";
-  return "Severe";
-}
-
-function positiveLabel(value: number) {
-  if (value < 22) return "Fragile";
-  if (value < 42) return "Uneven";
-  if (value < 62) return "Solid";
-  if (value < 82) return "Strong";
-  return "Exceptional";
-}
-
-function confidenceLabel(value: number) {
-  if (value < 22) return "Speculative";
-  if (value < 42) return "Tentative";
-  if (value < 62) return "Grounded";
-  if (value < 82) return "High";
-  return "Conviction";
-}
-
-function predictabilityLabel(value: number) {
-  if (value < 22) return "Volatile";
-  if (value < 42) return "Uncertain";
-  if (value < 62) return "Manageable";
-  if (value < 82) return "Reliable";
-  return "Highly stable";
-}
-
-export const OUTPUT_DEFINITIONS: OutputDefinition[] = [
-  {
-    id: "customerSatisfaction",
-    label: "Customer satisfaction",
-    group: "outcomes",
-    signal: "calm",
-    format: positiveLabel,
-  },
-  {
-    id: "productQuality",
-    label: "Product quality",
-    group: "outcomes",
-    signal: "calm",
-    format: positiveLabel,
-  },
-  {
-    id: "strategicConfidence",
-    label: "Strategic confidence",
-    group: "outcomes",
-    signal: "uncertain",
-    format: confidenceLabel,
-  },
-  {
-    id: "deliveryPredictability",
-    label: "Delivery predictability",
-    group: "outcomes",
-    signal: "uncertain",
-    format: predictabilityLabel,
-  },
-  {
-    id: "technicalDebt",
-    label: "Technical debt",
-    group: "costs",
-    signal: "debt",
-    format: intensityLabel,
-  },
-  {
-    id: "teamStress",
-    label: "Team stress",
-    group: "costs",
-    signal: "stress",
-    format: intensityLabel,
-  },
-  {
-    id: "engineeringComplexity",
-    label: "Engineering complexity",
-    group: "costs",
-    signal: "uncertain",
-    format: intensityLabel,
-  },
-  {
-    id: "deliveryTimeline",
-    label: "Delivery timeline",
-    group: "costs",
-    signal: "caution",
-    format: timelineLabel,
-  },
-];
-
-export const OUTCOME_DEFINITIONS = OUTPUT_DEFINITIONS.filter(
-  (item) => item.group === "outcomes",
-);
-
-export const COST_DEFINITIONS = OUTPUT_DEFINITIONS.filter(
-  (item) => item.group === "costs",
-);
-
-export type SliderEffect = {
-  sliderId: SliderId;
-  directionLabel: string;
-  gains: string[];
-  costs: string[];
-};
-
-/** Educational notes for the most recent constraint move. */
-export const SLIDER_EFFECTS: Record<SliderId, SliderEffect> = {
-  scope: {
-    sliderId: "scope",
-    directionLabel: "Scope ↑",
-    gains: ["Customer impact surface", "Strategic coverage"],
-    costs: ["Complexity", "Predictability"],
-  },
-  deliverySpeed: {
-    sliderId: "deliverySpeed",
-    directionLabel: "Delivery speed ↑",
-    gains: ["Time-to-learning", "Short-term momentum"],
-    costs: ["Technical debt", "Quality pressure"],
-  },
-  qualityBar: {
-    sliderId: "qualityBar",
-    directionLabel: "Quality bar ↑",
-    gains: ["Trust", "Craft and reliability"],
-    costs: ["Timeline", "Experimentation speed"],
-  },
-  teamSize: {
-    sliderId: "teamSize",
-    directionLabel: "Team size ↑",
-    gains: ["Capacity", "Parallel progress"],
-    costs: ["Coordination overhead", "Predictability"],
-  },
-  innovation: {
-    sliderId: "innovation",
-    directionLabel: "Innovation ↑",
-    gains: ["Strategic upside", "Learning opportunities"],
-    costs: ["Certainty", "Delivery predictability"],
-  },
-};
 
 export const DEFAULT_INPUTS: SliderInputs = {
   scope: 48,
@@ -273,9 +221,12 @@ export const DEFAULT_INPUTS: SliderInputs = {
 
 export const PRESETS: Preset[] = [
   {
-    id: "startupMvp",
-    label: "Startup MVP",
-    blurb: "Ship learning fast with a small team.",
+    id: "startup",
+    slug: "startup",
+    label: "Startup",
+    blurb: "Learn fast with a small team.",
+    explanation:
+      "Early-stage organizations usually trade polish and predictability for speed and learning. Scope stays narrow so a small team can discover what customers actually need before optimizing for scale.",
     tint: "amber",
     inputs: {
       scope: 28,
@@ -287,8 +238,11 @@ export const PRESETS: Preset[] = [
   },
   {
     id: "enterprisePlatform",
+    slug: "enterprise-platform",
     label: "Enterprise Platform",
-    blurb: "Broad ambition with a high quality bar.",
+    blurb: "Breadth, reliability, and a high bar.",
+    explanation:
+      "Platform organizations often optimize for breadth and reliability because many teams depend on what they ship. The tradeoff is slower delivery: stability becomes more valuable than pace.",
     tint: "navy",
     inputs: {
       scope: 78,
@@ -299,9 +253,12 @@ export const PRESETS: Preset[] = [
     },
   },
   {
-    id: "aiExperiment",
-    label: "AI Experiment",
+    id: "aiTransformation",
+    slug: "ai-transformation",
+    label: "AI Transformation",
     blurb: "High novelty, fast learning loops.",
+    explanation:
+      "Organizations investing heavily in AI often accept greater uncertainty in exchange for faster learning and long-term differentiation. Confidence lags novelty until evidence catches up.",
     tint: "teal",
     inputs: {
       scope: 36,
@@ -312,10 +269,77 @@ export const PRESETS: Preset[] = [
     },
   },
   {
-    id: "customerCommitment",
-    label: "Customer Commitment",
-    blurb: "Protect a promise under delivery pressure.",
+    id: "platformModernization",
+    slug: "platform-modernization",
+    label: "Platform Modernization",
+    blurb: "Health over feature theater.",
+    explanation:
+      "Modernization protects future velocity. Leaders keep scope intentionally tight so quality and architecture can improve—without dressing infrastructure work up as a customer-facing release.",
+    tint: "steel",
+    inputs: {
+      scope: 32,
+      deliverySpeed: 42,
+      qualityBar: 78,
+      teamSize: 52,
+      innovation: 48,
+    },
+  },
+  {
+    id: "technicalDebtReduction",
+    slug: "technical-debt-reduction",
+    label: "Technical Debt Reduction",
+    blurb: "Pay down the tax on future work.",
+    explanation:
+      "Debt reduction looks slow from the outside. Internally it is a deliberate trade: less visible scope now in exchange for lower stress and better predictability later.",
+    tint: "bronze",
+    inputs: {
+      scope: 30,
+      deliverySpeed: 35,
+      qualityBar: 80,
+      teamSize: 45,
+      innovation: 30,
+    },
+  },
+  {
+    id: "growthAtScale",
+    slug: "growth-at-scale",
+    label: "Growth at Scale",
+    blurb: "More customers, more surface area.",
+    explanation:
+      "Growth stretches scope and team size together. Organizations that optimize only for capacity often discover that coordination and quality quietly become the real constraint.",
     tint: "burgundy",
+    inputs: {
+      scope: 70,
+      deliverySpeed: 62,
+      qualityBar: 55,
+      teamSize: 72,
+      innovation: 48,
+    },
+  },
+  {
+    id: "regulatedEnterprise",
+    slug: "regulated-enterprise",
+    label: "Regulated Enterprise",
+    blurb: "Trust and compliance set the pace.",
+    explanation:
+      "In regulated contexts, quality and predictability are constraints rather than preferences. Innovation still matters, but it has to survive audit, risk review, and operational scrutiny.",
+    tint: "slate",
+    inputs: {
+      scope: 55,
+      deliverySpeed: 32,
+      qualityBar: 88,
+      teamSize: 65,
+      innovation: 35,
+    },
+  },
+  {
+    id: "customerExpansion",
+    slug: "customer-expansion",
+    label: "Customer Expansion",
+    blurb: "Protect a promise under pressure.",
+    explanation:
+      "A committed customer date often raises delivery speed and scope at once. Leaders who ignore the quality and capacity side of that trade usually meet it later in support queues.",
+    tint: "forest",
     inputs: {
       scope: 62,
       deliverySpeed: 82,
@@ -325,16 +349,37 @@ export const PRESETS: Preset[] = [
     },
   },
   {
-    id: "technicalModernization",
-    label: "Technical Modernization",
-    blurb: "Invest in platform health over feature sprawl.",
-    tint: "steel",
+    id: "enterpriseCoordination",
+    slug: "enterprise-coordination",
+    label: "Enterprise Coordination",
+    blurb: "Alignment tax at scale.",
+    explanation:
+      "Organizations with many teams often optimize for coordination and predictability. The tradeoff is that decision making can become slower as planning and governance increase.",
+    tint: "navy",
+    relatedEssayId: "beyond-safe",
     inputs: {
-      scope: 32,
-      deliverySpeed: 42,
-      qualityBar: 78,
-      teamSize: 52,
-      innovation: 48,
+      scope: 82,
+      deliverySpeed: 34,
+      qualityBar: 62,
+      teamSize: 88,
+      innovation: 28,
+    },
+  },
+  {
+    id: "empoweredProductTeams",
+    slug: "empowered-product-teams",
+    label: "Empowered Product Teams",
+    blurb: "Outcomes over ceremony.",
+    explanation:
+      "Organizations prioritize local decision making, continuous discovery, and customer ownership while accepting less centralized control. Team size stays small enough that ownership remains real.",
+    tint: "forest",
+    relatedEssayId: "product-operating-model",
+    inputs: {
+      scope: 42,
+      deliverySpeed: 58,
+      qualityBar: 68,
+      teamSize: 34,
+      innovation: 62,
     },
   },
 ];
@@ -389,7 +434,8 @@ function clamp(value: number, min = 0, max = 100) {
 }
 
 /**
- * Core simulation. Inputs and outputs are 0–100.
+ * Approximate relationships used only to surface tensions.
+ * Not a scoring system for organizations.
  */
 export function computeOutputs(inputs: SliderInputs): EngineOutputs {
   const { scope, deliverySpeed, qualityBar, teamSize, innovation } = inputs;
@@ -400,7 +446,6 @@ export function computeOutputs(inputs: SliderInputs): EngineOutputs {
   const teamN = teamSize / 100;
   const innovationN = innovation / 100;
 
-  // Capacity helps, but Brooks's Law bites when large teams meet aggressive pressure.
   const capacityRelief = teamN * 18 * (1 - speedN * 0.45);
   const brooksPenalty =
     teamN > 0.55 && speedN > 0.55
@@ -511,230 +556,252 @@ export function computeOutputs(inputs: SliderInputs): EngineOutputs {
   };
 }
 
-export type Commentary = {
-  id: string;
-  text: string;
-};
+type WeightedItem = { text: string; weight: number };
 
-/**
- * Pick commentary based on the current configuration.
- * Returns the strongest matching observations (ordered by relevance).
- */
-export function getCommentary(
-  inputs: SliderInputs,
-  outputs: EngineOutputs,
-): Commentary[] {
-  const observations: Array<Commentary & { weight: number }> = [];
-
-  const { scope, deliverySpeed, qualityBar, teamSize, innovation } = inputs;
-
-  if (deliverySpeed > 70 && qualityBar < 45) {
-    observations.push({
-      id: "speed-debt",
-      weight: 95,
-      text: "You are optimizing heavily for speed. Teams often underestimate the technical debt created by aggressive timelines.",
-    });
-  }
-
-  if (scope > 65 && qualityBar > 65 && teamSize < 45) {
-    observations.push({
-      id: "capacity-gap",
-      weight: 92,
-      text: "Your scope and quality expectations exceed the current team capacity.",
-    });
-  }
-
-  if (teamSize > 70 && deliverySpeed > 60) {
-    observations.push({
-      id: "brooks",
-      weight: 88,
-      text: "Adding engineers may increase delivery capacity, but communication overhead grows as well — especially under launch pressure.",
-    });
-  }
-
-  if (scope > 60 && deliverySpeed > 65 && qualityBar > 55) {
-    observations.push({
-      id: "iron-triangle",
-      weight: 90,
-      text: "If scope increases while timelines stay fixed, quality almost always suffers. Something has to give.",
-    });
-  }
-
-  if (innovation > 75) {
-    observations.push({
-      id: "experiment",
-      weight: 86,
-      text: "Experimental products require stronger learning loops and faster feedback. Confidence comes from evidence, not ambition alone.",
-    });
-  }
-
-  if (qualityBar > 75 && deliverySpeed < 45) {
-    observations.push({
-      id: "craft",
-      weight: 72,
-      text: "You are protecting craft. High quality with deliberate pace builds trust — but watch for opportunities delayed by perfectionism.",
-    });
-  }
-
-  if (scope < 35 && innovation > 60) {
-    observations.push({
-      id: "focused-bet",
-      weight: 74,
-      text: "A narrow scope with high novelty is a classic discovery posture: learn fast without drowning the team in surface area.",
-    });
-  }
-
-  if (outputs.technicalDebt > 70) {
-    observations.push({
-      id: "debt-high",
-      weight: 80,
-      text: "Technical debt is rising. Speed today is borrowing capacity from tomorrow's roadmap.",
-    });
-  }
-
-  if (outputs.teamStress > 72) {
-    observations.push({
-      id: "stress-high",
-      weight: 84,
-      text: "Team stress is carrying more of the load. Ambition, capacity, and scope are out of balance.",
-    });
-  }
-
-  if (outputs.deliveryPredictability < 35) {
-    observations.push({
-      id: "unpredictable",
-      weight: 78,
-      text: "Predictability is thin. The work may still be right — but commitments need more contingency.",
-    });
-  }
-
-  if (
-    qualityBar > 70 &&
-    scope < 45 &&
-    deliverySpeed < 55 &&
-    innovation < 55
-  ) {
-    observations.push({
-      id: "platform-health",
-      weight: 70,
-      text: "This configuration favors platform health and reliability over feature theater — a modernization mindset.",
-    });
-  }
-
-  if (scope > 70 && teamSize > 65 && innovation < 40) {
-    observations.push({
-      id: "enterprise-shape",
-      weight: 68,
-      text: "Large scope with a large organization rewards clear ownership boundaries. Without them, coordination becomes the product.",
-    });
-  }
-
-  if (observations.length === 0) {
-    observations.push({
-      id: "balanced",
-      weight: 50,
-      text: "You are holding a workable balance. The interesting decisions appear when one force — scope, speed, quality, or novelty — starts to dominate.",
-    });
-  }
-
-  return observations
+function topItems(items: WeightedItem[], limit: number): string[] {
+  return [...items]
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 3)
-    .map(({ id, text }) => ({ id, text }));
+    .slice(0, limit)
+    .map((item) => item.text);
 }
 
 /**
- * Live tradeoff insight — describes the tension being held, not a grade.
+ * Qualitative reflection for the current configuration.
+ * Numbers stay under the hood; leaders see tensions, not scores.
  */
-export function getCurrentTension(
+export function getReflection(
   inputs: SliderInputs,
   outputs: EngineOutputs,
-): Commentary {
+): Reflection {
   const { scope, deliverySpeed, qualityBar, teamSize, innovation } = inputs;
-  const candidates: Array<Commentary & { weight: number }> = [];
+
+  const benefits: WeightedItem[] = [];
+  const costs: WeightedItem[] = [];
+  const effects: WeightedItem[] = [];
+  const questions: WeightedItem[] = [];
+
+  if (deliverySpeed > 60) {
+    benefits.push({
+      weight: deliverySpeed,
+      text: "Faster feedback from customers and the market",
+    });
+    benefits.push({
+      weight: deliverySpeed - 8,
+      text: "Shorter cycles between idea and evidence",
+    });
+  }
+  if (qualityBar > 60) {
+    benefits.push({
+      weight: qualityBar,
+      text: "Stronger trust in reliability and craft",
+    });
+    benefits.push({
+      weight: qualityBar - 10,
+      text: "Lower operational and support risk over time",
+    });
+  }
+  if (scope < 40) {
+    benefits.push({
+      weight: 100 - scope,
+      text: "Clearer focus on the jobs that matter most",
+    });
+  }
+  if (innovation > 60) {
+    benefits.push({
+      weight: innovation,
+      text: "Room for strategic upside and new learning",
+    });
+  }
+  if (teamSize > 55 && scope > 55) {
+    benefits.push({
+      weight: (teamSize + scope) / 2,
+      text: "More parallel capacity across a wide surface area",
+    });
+  }
+  if (deliverySpeed < 45 && qualityBar > 55) {
+    benefits.push({
+      weight: 70,
+      text: "Space to make deliberate, durable decisions",
+    });
+  }
+  if (outputs.customerSatisfaction > 55) {
+    benefits.push({
+      weight: outputs.customerSatisfaction,
+      text: "A posture more likely to protect customer outcomes",
+    });
+  }
+  if (benefits.length === 0) {
+    benefits.push({
+      weight: 40,
+      text: "A workable balance — no single decision is dominating yet",
+    });
+  }
 
   if (deliverySpeed > 65 && qualityBar < 50) {
-    candidates.push({
-      id: "speed-vs-maintainability",
-      weight: 94,
-      text: "You are prioritizing delivery speed over long-term maintainability.",
+    costs.push({
+      weight: 95,
+      text: "Technical debt and quality pressure from aggressive pace",
     });
   }
-
-  if (scope > 60 && teamSize < 45) {
-    candidates.push({
-      id: "expectations-vs-capacity",
-      weight: 92,
-      text: "Customer expectations currently exceed team capacity.",
+  if (scope > 65) {
+    costs.push({
+      weight: scope,
+      text: "Broader scope raising complexity and integration risk",
     });
   }
-
-  if (qualityBar > 70 && innovation > 55) {
-    candidates.push({
-      id: "quality-vs-learning",
+  if (innovation > 70) {
+    costs.push({
+      weight: innovation,
+      text: "Lower near-term certainty while experiments run",
+    });
+  }
+  if (teamSize > 65) {
+    costs.push({
+      weight: teamSize,
+      text: "Coordination cost and decision latency as the organization grows",
+    });
+  }
+  if (qualityBar > 75 && deliverySpeed > 60) {
+    costs.push({
       weight: 88,
-      text: "Your quality expectations may slow learning and experimentation.",
+      text: "High craft under high pace — something else absorbs the pressure",
     });
   }
-
-  if (innovation < 40 && qualityBar > 60 && deliverySpeed < 55) {
-    candidates.push({
-      id: "stability-over-innovation",
-      weight: 86,
-      text: "This configuration favors stability over innovation.",
+  if (outputs.technicalDebt > 60) {
+    costs.push({
+      weight: outputs.technicalDebt,
+      text: "Rising debt that borrows capacity from future roadmaps",
     });
   }
-
-  if (scope > 65 && outputs.deliveryPredictability < 50) {
-    candidates.push({
-      id: "scope-vs-predictability",
-      weight: 90,
-      text: "Your scope is growing faster than predictability.",
+  if (outputs.teamStress > 65) {
+    costs.push({
+      weight: outputs.teamStress,
+      text: "Team stress carrying more of the load than the system admits",
     });
   }
-
-  if (innovation > 70 && outputs.strategicConfidence < 50) {
-    candidates.push({
-      id: "novelty-vs-confidence",
-      weight: 87,
-      text: "You are trading certainty for strategic upside and faster learning.",
+  if (outputs.deliveryPredictability < 45) {
+    costs.push({
+      weight: 100 - outputs.deliveryPredictability,
+      text: "Thin predictability around commitments and dates",
+    });
+  }
+  if (costs.length === 0) {
+    costs.push({
+      weight: 40,
+      text: "Few sharp costs yet — watch what happens when one priority dominates",
     });
   }
 
   if (teamSize > 70 && deliverySpeed > 55) {
-    candidates.push({
-      id: "capacity-vs-coordination",
-      weight: 84,
-      text: "More capacity is available, but coordination cost rises with urgency.",
+    effects.push({
+      weight: 90,
+      text: "Meetings and dependency management may start to outpace building",
+    });
+  }
+  if (scope > 70 && teamSize > 65) {
+    effects.push({
+      weight: 88,
+      text: "Ownership boundaries matter more than raw headcount",
+    });
+  }
+  if (deliverySpeed > 70 && qualityBar < 45) {
+    effects.push({
+      weight: 92,
+      text: "Engineering may optimize for shipping over maintainability",
+    });
+  }
+  if (innovation > 75) {
+    effects.push({
+      weight: 86,
+      text: "Discovery and evidence become more important than detailed plans",
+    });
+  }
+  if (qualityBar > 75 && deliverySpeed < 45) {
+    effects.push({
+      weight: 78,
+      text: "Teams may slow to protect craft — useful until perfectionism sets in",
+    });
+  }
+  if (scope < 35 && innovation > 60) {
+    effects.push({
+      weight: 80,
+      text: "A classic discovery posture: learn fast without drowning in surface area",
+    });
+  }
+  if (teamSize < 35 && scope > 60) {
+    effects.push({
+      weight: 91,
+      text: "A small team carrying broad ambition — overload is a design risk",
+    });
+  }
+  if (outputs.strategicConfidence < 45 && innovation > 60) {
+    effects.push({
+      weight: 75,
+      text: "Leaders may feel strategically curious and operationally uncertain at once",
+    });
+  }
+  if (effects.length === 0) {
+    effects.push({
+      weight: 40,
+      text: "Behavior stays relatively balanced until one constraint starts to dominate",
     });
   }
 
-  if (qualityBar > 70 && deliverySpeed > 65) {
-    candidates.push({
-      id: "craft-vs-pace",
-      weight: 85,
-      text: "You are asking for high craft under high pace — something else usually absorbs the pressure.",
+  if (deliverySpeed > 70 && qualityBar < 50) {
+    questions.push({
+      weight: 96,
+      text: "Is delivery speed actually the constraint — or is decision making?",
+    });
+  }
+  if (teamSize > 70) {
+    questions.push({
+      weight: 94,
+      text: "Would clearer ownership unlock more than additional people?",
+    });
+  }
+  if (scope > 70) {
+    questions.push({
+      weight: 93,
+      text: "What would we stop doing if customer outcomes were the only scoreboard?",
+    });
+  }
+  if (innovation > 75) {
+    questions.push({
+      weight: 92,
+      text: "What evidence would make this bet feel grounded rather than hopeful?",
+    });
+  }
+  if (qualityBar > 80 && deliverySpeed < 40) {
+    questions.push({
+      weight: 88,
+      text: "Are we protecting customers — or protecting ourselves from shipping?",
+    });
+  }
+  if (scope > 60 && teamSize < 45) {
+    questions.push({
+      weight: 95,
+      text: "Are expectations set by ambition, or by what this team can actually absorb?",
+    });
+  }
+  if (outputs.technicalDebt > 70) {
+    questions.push({
+      weight: 90,
+      text: "Whose future roadmap are we borrowing from to look fast today?",
+    });
+  }
+  if (questions.length === 0) {
+    questions.push({
+      weight: 50,
+      text: "If one of these decisions had to give, which would you choose — and why?",
     });
   }
 
-  if (scope < 40 && deliverySpeed > 60) {
-    candidates.push({
-      id: "focus-vs-breadth",
-      weight: 76,
-      text: "A narrower scope is buying speed — and leaving adjacent customer needs for later.",
-    });
-  }
-
-  if (candidates.length === 0) {
-    return {
-      id: "held-in-balance",
-      text: "No single force dominates yet. The interesting decisions appear when one priority starts to outweigh the others.",
-    };
-  }
-
-  candidates.sort((a, b) => b.weight - a.weight);
-  const top = candidates[0];
-  return { id: top.id, text: top.text };
+  return {
+    benefits: topItems(benefits, 4),
+    costs: topItems(costs, 4),
+    organizationalEffects: topItems(effects, 3),
+    question: topItems(questions, 1)[0],
+  };
 }
 
 export function inputsEqual(a: SliderInputs, b: SliderInputs) {
@@ -750,18 +817,24 @@ export function matchPreset(inputs: SliderInputs): PresetId | null {
   return null;
 }
 
-export type SignalTone =
-  | "calm"
-  | "caution"
-  | "stress"
-  | "uncertain"
-  | "debt"
-  | "neutral";
-
-/** Category color for a metric — fixed by family, not by “good” vs “bad.” */
-export function categorySignal(definition: OutputDefinition): SignalTone {
-  return definition.signal;
+export function getPresetById(id: PresetId): Preset | undefined {
+  return PRESETS.find((preset) => preset.id === id);
 }
+
+export function getPresetBySlug(slug: string): Preset | undefined {
+  return PRESETS.find((preset) => preset.slug === slug);
+}
+
+export function getPresetByEssayId(essayId: string): Preset | undefined {
+  return PRESETS.find((preset) => preset.relatedEssayId === essayId);
+}
+
+/** Build a shareable homepage URL for a scenario. */
+export function scenarioHref(slug: string): string {
+  return `/?scenario=${encodeURIComponent(slug)}#tradeoffs`;
+}
+
+export const SCENARIO_QUERY_PARAM = "scenario";
 
 export const PRINCIPLE_TINT_VAR: Record<PrincipleTint, string> = {
   slate: "var(--signal-uncertain)",
@@ -777,4 +850,7 @@ export const PRESET_TINT_VAR: Record<PresetTint, string> = {
   teal: "var(--tint-teal)",
   burgundy: "var(--tint-burgundy)",
   steel: "var(--tint-steel)",
+  forest: "var(--accent)",
+  slate: "var(--signal-uncertain)",
+  bronze: "var(--signal-debt)",
 };

@@ -27,11 +27,11 @@ export const site = {
       items: [
         {
           label: "How do product tradeoffs shape software?",
-          href: "#tradeoffs",
+          href: "/?scenario=empowered-product-teams#tradeoffs",
         },
         {
           label: "How is AI changing software development?",
-          href: "#ai-changing-software-development",
+          href: "#writing",
         },
         {
           label: "What makes teams effective?",
@@ -39,7 +39,7 @@ export const site = {
         },
         {
           label: "How should humans and AI collaborate?",
-          href: "#product-engineering-converging",
+          href: "#projects",
         },
         {
           label: "Why do some products succeed?",
@@ -50,14 +50,14 @@ export const site = {
   },
   writing: {
     aside:
-      "A notebook of ideas under pressure — less announcement, more working through the argument.",
+      "A curated notebook — less announcement, more working through the argument.",
   },
   projects: {
     aside:
-      "Building is how I test whether an idea survives contact with reality.",
+      "Side projects that keep curiosity honest about what is easy in theory and hard in practice.",
   },
   about: {
-    title: "Curious about how products actually work",
+    title: "Why any of this matters",
     pullQuote:
       "Software is increasingly about systems, human behavior, and the quiet constraints that decide whether something succeeds.",
     paragraphs: [
