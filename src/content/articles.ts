@@ -8,13 +8,13 @@ export type Article = {
   category: string;
   accent: string;
   illustration: ArticleIllustration;
-  /** Tradeoff Engine challenge slug — deep-links into a predefined mental model. */
+  /** Tradeoff Model challenge slug — deep-links into a predefined mental model. */
   relatedScenarioSlug: string;
   relatedConcepts: readonly string[];
   status: "draft" | "published";
 };
 
-/** Curated homepage writing — essays that extend the Tradeoff Engine. */
+/** Curated homepage writing — essays that extend the Tradeoff Model. */
 export const articles: Article[] = [
   {
     id: "beyond-safe",
@@ -25,8 +25,12 @@ export const articles: Article[] = [
     category: "Product strategy",
     accent: "#4a6d8c",
     illustration: "beyond-safe",
-    relatedScenarioSlug: "enterprise-coordination",
-    relatedConcepts: ["Team Size", "Delivery Predictability", "Brooks's Law"],
+    relatedScenarioSlug: "managing-dependencies",
+    relatedConcepts: [
+      "Organization Size",
+      "Delivery Predictability",
+      "Brooks's Law",
+    ],
     status: "draft",
   },
   {
@@ -38,12 +42,12 @@ export const articles: Article[] = [
     category: "Organizations",
     accent: "#3d5a4c",
     illustration: "product-operating-model",
-    relatedScenarioSlug: "empowered-product-teams",
+    relatedScenarioSlug: "managing-growth",
     relatedConcepts: [
       "Outcomes",
       "Strategic Confidence",
       "Customer Satisfaction",
-      "Quality",
+      "Product Quality",
     ],
     status: "draft",
   },

@@ -1,5 +1,5 @@
 /**
- * Product Tradeoff Engine — interactive mental model
+ * Product Tradeoff Model — interactive mental model
  *
  * This is not a calculator, prediction engine, or claim of universal truth.
  * It encodes how one experienced product leader reasons about the
@@ -45,13 +45,11 @@ export type SliderDefinition = {
 };
 
 export type PresetId =
-  | "growthAtScale"
-  | "enterpriseCoordination"
-  | "empoweredProductTeams"
-  | "aiTransformation"
-  | "platformModernization"
-  | "customerExpansion"
-  | "regulatedEnterprise";
+  | "managingGrowth"
+  | "managingDependencies"
+  | "modernizingLegacyPlatforms"
+  | "managingCompliance"
+  | "aiAdoption";
 
 export type PresetTint =
   | "amber"
@@ -65,11 +63,12 @@ export type PresetTint =
 
 /** Challenge-framed guidance that surfaces when this leadership challenge is active. */
 export type ChallengeGuidance = {
-  /** Short lens shown above recommendations */
+  /** Short lens shown above recommendations — the one core principle */
   lens: string;
   benefits: string[];
   costs: string[];
   organizationalEffects: string[];
+  /** Reflection question shown in Questions to Consider */
   question: string;
 };
 
@@ -84,6 +83,13 @@ export type Preset = {
   explanation: string;
   /** Tailored guidance for this leadership challenge */
   guidance: ChallengeGuidance;
+  /** Decisions most relevant to this challenge — used for content weighting, not UI emphasis */
+  emphasizedSliders: SliderId[];
+  /**
+   * Challenge-framed Understanding copy for key decisions.
+   * Falls back to SLIDER_DEFINITIONS when a slider has no override.
+   */
+  sliderInsights?: Partial<Record<SliderId, SliderContext>>;
   tint: PresetTint;
   inputs: SliderInputs;
   /** Optional essay this challenge deep-links from */
@@ -95,8 +101,12 @@ export type PrincipleTint = "slate" | "bronze" | "rust" | "teal" | "forest";
 export type Principle = {
   id: string;
   title: string;
-  summary: string;
-  detail: string;
+  /** One sentence capturing the core idea */
+  core: string;
+  /** 2–3 sentences: what it looks like in a real org */
+  practicalExample: string;
+  /** One sentence connecting back to the Product Tradeoff Model */
+  whyItMatters: string;
   tint: PrincipleTint;
 };
 
@@ -119,10 +129,10 @@ export type Reflection = {
 export const SLIDER_DEFINITIONS: SliderDefinition[] = [
   {
     id: "scope",
-    label: "Scope",
-    left: "Narrow",
-    right: "Broad",
-    represents: "How much surface area the product tries to cover",
+    label: "Product Scope",
+    left: "Focused",
+    right: "Comprehensive",
+    represents: "How much capability the product tries to provide",
     context: {
       whyLeadersIncrease: [
         "Cover more customer jobs in a single release",
@@ -135,13 +145,13 @@ export const SLIDER_DEFINITIONS: SliderDefinition[] = [
         "Delivery predictability thins",
       ],
       leadershipQuestion:
-        "If we cut scope by a third, what would get better for the customer?",
+        "If we cut product scope by a third, what would get better for the customer?",
     },
   },
   {
     id: "deliverySpeed",
     label: "Delivery Speed",
-    left: "Deliberate",
+    left: "Measured",
     right: "Aggressive",
     represents: "How hard the organization presses for time-to-market",
     context: {
@@ -161,10 +171,11 @@ export const SLIDER_DEFINITIONS: SliderDefinition[] = [
   },
   {
     id: "qualityBar",
-    label: "Quality Bar",
-    left: "Prototype",
-    right: "Polished",
-    represents: "How much craft, reliability, and UX finish you insist on",
+    label: "Product Quality",
+    left: "Functional",
+    right: "Exceptional",
+    represents:
+      "How much craftsmanship, reliability, and UX polish you insist on",
     context: {
       whyLeadersIncrease: [
         "Protect trust in high-stakes or regulated contexts",
@@ -182,14 +193,14 @@ export const SLIDER_DEFINITIONS: SliderDefinition[] = [
   },
   {
     id: "teamSize",
-    label: "Team Size",
-    left: "Small team",
-    right: "Large organization",
+    label: "Organization Size",
+    left: "Small Team",
+    right: "Large Organization",
     represents: "Capacity versus coordination cost",
     context: {
       whyLeadersIncrease: [
         "Add parallel capacity for a large surface area",
-        "Cover specialized skills the current team lacks",
+        "Cover specialized skills the current organization lacks",
         "Absorb growth without abandoning commitments",
       ],
       whatOftenChanges: [
@@ -205,8 +216,9 @@ export const SLIDER_DEFINITIONS: SliderDefinition[] = [
     id: "innovation",
     label: "Innovation",
     left: "Incremental",
-    right: "Experimental",
-    represents: "How much novelty and uncertainty you deliberately take on",
+    right: "Transformational",
+    represents:
+      "How ambitious a change the organization is willing to pursue",
     context: {
       whyLeadersIncrease: [
         "Open new strategic upside",
@@ -234,243 +246,325 @@ export const DEFAULT_INPUTS: SliderInputs = {
 
 export const PRESETS: Preset[] = [
   {
-    id: "growthAtScale",
-    slug: "growth-at-scale",
-    label: "Scaling the Organization",
+    id: "managingGrowth",
+    slug: "managing-growth",
+    label: "Managing Growth",
     blurb:
-      "Growing teams, products, and dependencies while maintaining speed, alignment, and effective decision-making.",
+      "Expanding products and organizations without letting coordination cost outrun focus.",
     explanation:
-      "Growing teams and products expands capacity—but also coordination surface. Speed and alignment start to compete: more people can mean slower decisions unless ownership stays clear. Leaders often add process or headcount before clarifying who decides.\n\nThis model explores how growth, team size, and delivery pressure trade off as the organization scales.",
+      "Growth looks like a capacity problem. It is usually a focus problem. Every expansion of product scope and organization size multiplies the number of decisions that must stay aligned.\n\nThis model explores the tension between expanding what you cover and keeping the organization able to decide.",
     guidance: {
-      lens: "Scaling rarely fails from too few people. It fails when growth outruns clear ownership and decision rights.",
+      lens: "Growth multiplies coordination cost faster than it adds capacity — unless focus stays deliberately tight.",
       benefits: [
-        "More parallel capacity as products and teams expand together",
-        "Room to cover specialized skills without starving core delivery",
+        "More room to cover demand without starving the core product",
       ],
       costs: [
-        "Coordination and decision latency rising faster than headcount helps",
-        "Alignment tax that quietly slows every cross-team commitment",
+        "Decision latency rising faster than headcount or scope can justify",
       ],
       organizationalEffects: [
-        "Meetings and dependency management start to compete with building",
-        "Leaders feel pressure to add process before they clarify ownership",
+        "Leaders feel pressure to hire or expand before they narrow what matters",
       ],
       question:
-        "If we grew half as fast, what would improve about how decisions get made?",
+        "If we grew half as much this year, what would get sharper for customers?",
+    },
+    emphasizedSliders: ["scope", "teamSize", "deliverySpeed"],
+    sliderInsights: {
+      scope: {
+        whyLeadersIncrease: [
+          "Serve more segments without choosing which jobs matter most",
+        ],
+        whatOftenChanges: [
+          "Focus thins — every team inherits a wider surface to keep coherent",
+        ],
+        leadershipQuestion:
+          "What are we willing to stop covering so growth stays usable?",
+      },
+      teamSize: {
+        whyLeadersIncrease: [
+          "Match headcount to rising demand and specialized work",
+        ],
+        whatOftenChanges: [
+          "More people create more paths that must agree before work moves",
+        ],
+        leadershipQuestion:
+          "Are we adding people to create capacity — or to compensate for unclear focus?",
+      },
+      deliverySpeed: {
+        whyLeadersIncrease: [
+          "Prove growth is working by shipping expansion bets quickly",
+        ],
+        whatOftenChanges: [
+          "Pace hides whether the organization can still decide cleanly",
+        ],
+        leadershipQuestion:
+          "Is speed revealing focus — or papering over the cost of growth?",
+      },
     },
     tint: "burgundy",
+    relatedEssayId: "product-operating-model",
     inputs: {
-      scope: 70,
-      deliverySpeed: 62,
-      qualityBar: 55,
-      teamSize: 72,
-      innovation: 48,
+      scope: 68,
+      deliverySpeed: 58,
+      qualityBar: 52,
+      teamSize: 74,
+      innovation: 44,
     },
   },
   {
-    id: "enterpriseCoordination",
-    slug: "enterprise-coordination",
-    label: "Coordinating Enterprise Delivery",
+    id: "managingDependencies",
+    slug: "managing-dependencies",
+    label: "Managing Dependencies",
     blurb:
-      "Aligning multiple teams, shared platforms, and complex dependencies without slowing execution.",
+      "Reducing the conversations that must happen before work can move.",
     explanation:
-      "Multiple teams and shared platforms need enough alignment to stay predictable—yet every planning ritual and governance layer can slow the work it was meant to protect. Leaders struggle to tell when coordination still reduces risk and when it has become theater.\n\nThis model explores the tradeoffs between enterprise predictability and local execution speed.",
+      "Dependencies are conversations waiting to happen. Each one inserts another handoff, approval, or wait before work can proceed.\n\nThis model explores how product scope and organization size multiply those conversations — and how delivery speed collapses when they do.",
     guidance: {
-      lens: "Enterprise coordination pays for itself only while it reduces risk faster than it slows local decisions.",
+      lens: "Every dependency introduces another conversation before work can move.",
       benefits: [
-        "Stronger predictability across shared platforms and dependent teams",
-        "Clearer enterprise commitments when integration risk is real",
+        "Fewer waits when work can finish without borrowing someone else's calendar",
       ],
       costs: [
-        "Planning and governance overhead that slows local execution",
-        "Decision rights drifting upward until teams wait instead of ship",
+        "Each new dependency adds another conversation that can stall progress",
       ],
       organizationalEffects: [
-        "Coordination rituals expand until they feel safer than ownership",
-        "Local learning slows because evidence has to travel through the system",
+        "Delivery slows in the gaps between teams — not in the work itself",
       ],
       question:
-        "Where does coordination still create value — and where is it mostly theater?",
+        "Which dependency are we treating as inevitable that is really just another conversation?",
+    },
+    emphasizedSliders: ["scope", "teamSize", "deliverySpeed"],
+    sliderInsights: {
+      scope: {
+        whyLeadersIncrease: [
+          "Cover more capability — even when that means depending on more teams",
+        ],
+        whatOftenChanges: [
+          "Broader scope creates more places where work must wait on someone else",
+        ],
+        leadershipQuestion:
+          "How much of this scope only exists because another team must talk first?",
+      },
+      teamSize: {
+        whyLeadersIncrease: [
+          "Add teams to cover specialized work the product now requires",
+        ],
+        whatOftenChanges: [
+          "More teams means more conversations between them before anything ships",
+        ],
+        leadershipQuestion:
+          "Does a larger organization reduce waits — or multiply the conversations that cause them?",
+      },
+      deliverySpeed: {
+        whyLeadersIncrease: [
+          "Push for pace even when work still needs others to respond first",
+        ],
+        whatOftenChanges: [
+          "Aggressive timelines collide with every conversation a dependency requires",
+        ],
+        leadershipQuestion:
+          "Are we slow because we lack speed — or because work keeps waiting on a conversation?",
+      },
     },
     tint: "navy",
     relatedEssayId: "beyond-safe",
     inputs: {
-      scope: 82,
-      deliverySpeed: 34,
-      qualityBar: 62,
-      teamSize: 88,
+      scope: 78,
+      deliverySpeed: 30,
+      qualityBar: 56,
+      teamSize: 84,
+      innovation: 26,
+    },
+  },
+  {
+    id: "modernizingLegacyPlatforms",
+    slug: "modernizing-legacy-platforms",
+    label: "Modernizing Legacy Platforms",
+    blurb:
+      "Rebuilding foundations while still delivering for customers — without pretending both are free.",
+    explanation:
+      "Legacy platforms tax every release. Modernizing them is real work — and it competes with the product customers can see. You cannot run the old system and build the new one as if delivery were unchanged.\n\nThis model explores the dual-running cost: scope deferred, quality protected, and ambition paid for in patience.",
+    guidance: {
+      lens: "You cannot modernize the platform and ship the product the same way at once.",
+      benefits: [
+        "Future delivery stops paying yesterday's platform tax",
+      ],
+      costs: [
+        "Near-term customer scope gives way while two systems must be kept alive",
+      ],
+      organizationalEffects: [
+        "Roadmaps split between visible features and invisible dual-running work",
+      ],
+      question:
+        "What customer promise are we consciously deferring so modernization can finish?",
+    },
+    emphasizedSliders: ["scope", "qualityBar", "innovation"],
+    sliderInsights: {
+      scope: {
+        whyLeadersIncrease: [
+          "Keep shipping visible features so modernization does not look like pause",
+        ],
+        whatOftenChanges: [
+          "Trying to modernize and expand scope at once stretches both thin",
+        ],
+        leadershipQuestion:
+          "Which customer scope must wait so the platform can actually change?",
+      },
+      qualityBar: {
+        whyLeadersIncrease: [
+          "Protect reliability while old and new systems run side by side",
+        ],
+        whatOftenChanges: [
+          "Dual-running raises the cost of every definition of done",
+        ],
+        leadershipQuestion:
+          "Are we holding quality for customers — or using polish to avoid cutting scope?",
+      },
+      innovation: {
+        whyLeadersIncrease: [
+          "Treat platform change as a transformational bet, not a tidy refactor",
+        ],
+        whatOftenChanges: [
+          "Ambition rises — and so does the uncertainty of running two worlds",
+        ],
+        leadershipQuestion:
+          "Is this modernization transformational enough to justify dual-running — or just expensive churn?",
+      },
+    },
+    tint: "steel",
+    inputs: {
+      scope: 28,
+      deliverySpeed: 36,
+      qualityBar: 82,
+      teamSize: 54,
+      innovation: 60,
+    },
+  },
+  {
+    id: "managingCompliance",
+    slug: "managing-compliance",
+    label: "Managing Compliance",
+    blurb:
+      "Treating assurance as a design constraint — not an afterthought bolted onto speed.",
+    explanation:
+      "Compliance is not a workstream beside the product. It reshapes what scope is allowed, how fast you can move, and how much novelty you can absorb.\n\nThis model explores assurance as a constraint: every other leadership decision is made inside it, whether leaders admit that or not.",
+    guidance: {
+      lens: "Compliance is a constraint that reshapes every other decision — not a checklist at the end.",
+      benefits: [
+        "Trust compounds when assurance is designed into the product from the start",
+      ],
+      costs: [
+        "Speed and experimentation shrink wherever evidence and approval are required",
+      ],
+      organizationalEffects: [
+        "Teams optimize for what can be shown as safe — sometimes before what helps customers",
+      ],
+      question:
+        "Which controls protect customers — and which ones only slow decisions we already trust?",
+    },
+    emphasizedSliders: ["qualityBar", "deliverySpeed", "innovation"],
+    sliderInsights: {
+      qualityBar: {
+        whyLeadersIncrease: [
+          "Meet assurance bars that customers, regulators, and auditors will test",
+        ],
+        whatOftenChanges: [
+          "Quality stops being polish and becomes the price of being allowed to ship",
+        ],
+        leadershipQuestion:
+          "Is this bar protecting customers — or protecting us from deciding what 'good enough' means?",
+      },
+      deliverySpeed: {
+        whyLeadersIncrease: [
+          "Push pace as if compliance were something that can catch up later",
+        ],
+        whatOftenChanges: [
+          "Aggressive speed either waits on assurance — or quietly skips it",
+        ],
+        leadershipQuestion:
+          "Are we buying speed by deferring assurance we will still have to pay for?",
+      },
+      innovation: {
+        whyLeadersIncrease: [
+          "Pursue new capability while still operating inside regulated constraints",
+        ],
+        whatOftenChanges: [
+          "Novelty and assurance compete for the same attention and evidence",
+        ],
+        leadershipQuestion:
+          "What evidence would make this innovation compliant enough to try — not forever?",
+      },
+    },
+    tint: "slate",
+    inputs: {
+      scope: 50,
+      deliverySpeed: 26,
+      qualityBar: 90,
+      teamSize: 64,
       innovation: 28,
     },
   },
   {
-    id: "empoweredProductTeams",
-    slug: "empowered-product-teams",
-    label: "Building Product Teams",
+    id: "aiAdoption",
+    slug: "ai-adoption",
+    label: "AI Adoption",
     blurb:
-      "Strengthening product, engineering, and design partnerships while increasing ownership, accountability, and customer focus.",
+      "Raising learning speed without pretending uncertainty goes away.",
     explanation:
-      "Strong product, engineering, and design partnerships raise ownership and customer focus—but only when teams hold real decision rights, not just execution tasks. Leaders often keep control while calling it empowerment, then wonder why accountability never sticks.\n\nThis model explores what shifts when ownership, quality, and autonomy move closer to the team.",
+      "AI lets organizations learn and ship differently — and it raises uncertainty in the same motion. Ambition outruns readiness when leaders treat novelty as proof.\n\nThis model explores the twin rise of learning speed and uncertainty: how innovation, pace, and quality must stay honest with each other.",
     guidance: {
-      lens: "Empowered product teams trade centralized control for clearer ownership—and only work when accountability travels with the decision rights.",
+      lens: "AI raises learning speed and uncertainty together — ambition without readiness is just fashion.",
       benefits: [
-        "Tighter product, engineering, and design partnership around outcomes",
-        "Faster local decisions when teams own the customer problem",
+        "Faster loops from idea to evidence when bets stay narrow enough to measure",
       ],
       costs: [
-        "Less centralized control for leaders used to steering every bet",
-        "Uneven judgment across teams until coaching and standards catch up",
+        "Confidence lags novelty until readiness and quality catch the ambition",
       ],
       organizationalEffects: [
-        "Roadmaps become team commitments instead of portfolio theater",
-        "Leaders shift from directing work to clarifying problems and constraints",
+        "Teams debate demos and possibility while evidence and operating habits lag",
       ],
       question:
-        "Are teams empowered to decide — or only empowered to execute someone else's plan?",
+        "What would we need to see before calling this adoption — not just an experiment?",
     },
-    tint: "forest",
-    relatedEssayId: "product-operating-model",
-    inputs: {
-      scope: 42,
-      deliverySpeed: 58,
-      qualityBar: 68,
-      teamSize: 34,
-      innovation: 62,
-    },
-  },
-  {
-    id: "aiTransformation",
-    slug: "ai-transformation",
-    label: "Adopting AI",
-    blurb:
-      "Integrating AI into products and ways of working while balancing innovation, governance, and organizational readiness.",
-    explanation:
-      "AI opens new capabilities and ways of working—but confidence usually lags novelty. Governance, readiness, and unproven bets compete for attention at once. Leaders feel pressure to declare transformation before the organization can absorb it.\n\nThis model explores how innovation, quality, and delivery pace trade off as AI enters the product and the operating model.",
-    guidance: {
-      lens: "AI adoption is an innovation and readiness problem first—governance has to protect trust without freezing learning.",
-      benefits: [
-        "Strategic upside from new product capabilities and ways of working",
-        "Faster learning loops when experiments are bounded and instrumented",
-      ],
-      costs: [
-        "Lower near-term certainty while unproven bets consume attention",
-        "Governance and readiness gaps that turn novelty into operational risk",
-      ],
-      organizationalEffects: [
-        "Teams debate demos more than evidence until measurement catches up",
-        "Leaders feel pressure to declare transformation before the org is ready",
-      ],
-      question:
-        "What evidence would make this AI bet feel grounded rather than fashionable?",
+    emphasizedSliders: ["innovation", "deliverySpeed", "qualityBar"],
+    sliderInsights: {
+      innovation: {
+        whyLeadersIncrease: [
+          "Open strategic upside before competitors define the new default",
+        ],
+        whatOftenChanges: [
+          "Uncertainty rises in lockstep with how transformational the bet becomes",
+        ],
+        leadershipQuestion:
+          "Is this ambition matched by readiness — or only by enthusiasm?",
+      },
+      deliverySpeed: {
+        whyLeadersIncrease: [
+          "Learn faster by shipping AI-assisted change on short cycles",
+        ],
+        whatOftenChanges: [
+          "Pace amplifies learning — and amplifies mistakes the org cannot yet absorb",
+        ],
+        leadershipQuestion:
+          "Are we moving fast to learn — or fast to look like we already know?",
+      },
+      qualityBar: {
+        whyLeadersIncrease: [
+          "Hold craft and reliability while AI changes how work gets done",
+        ],
+        whatOftenChanges: [
+          "A low bar makes learning cheap; a high bar makes trust possible — rarely both at once",
+        ],
+        leadershipQuestion:
+          "Where must quality stay non-negotiable even while we are still learning?",
+      },
     },
     tint: "teal",
     inputs: {
-      scope: 36,
-      deliverySpeed: 70,
-      qualityBar: 40,
-      teamSize: 32,
-      innovation: 88,
-    },
-  },
-  {
-    id: "platformModernization",
-    slug: "platform-modernization",
-    label: "Modernizing Legacy Platforms",
-    blurb:
-      "Improving aging technology, reducing technical debt, and evolving architecture without disrupting customer delivery.",
-    explanation:
-      "Aging platforms and technical debt tax every future release. The hard part is trading visible customer scope for architecture work stakeholders struggle to see. Leaders often delay until delivery pain is acute—or dress infrastructure up as a feature.\n\nThis model explores the tradeoffs between near-term scope, quality foundations, and future velocity.",
-    guidance: {
-      lens: "Modernization protects future velocity only when leaders treat platform work as a deliberate tradeoff against near-term scope.",
-      benefits: [
-        "Lower future delivery tax as aging platforms and debt improve",
-        "More durable quality foundations for the next wave of product work",
-      ],
-      costs: [
-        "Less visible customer scope while architecture absorbs attention",
-        "Stakeholder impatience when progress is real but hard to demo",
-      ],
-      organizationalEffects: [
-        "Roadmaps split between customer promises and invisible enablement",
-        "Teams feel pressure to relabel infrastructure as features",
-      ],
-      question:
-        "What customer outcome are we protecting by modernizing — and how will we know?",
-    },
-    tint: "steel",
-    inputs: {
       scope: 32,
-      deliverySpeed: 42,
-      qualityBar: 78,
-      teamSize: 52,
-      innovation: 48,
-    },
-  },
-  {
-    id: "customerExpansion",
-    slug: "customer-expansion",
-    label: "Growing the Business",
-    blurb:
-      "Expanding into new markets, customers, or products while maintaining focus, execution, and organizational alignment.",
-    explanation:
-      "Expanding into new markets, customers, or products creates opportunity—but also complexity. Leaders must balance growth with focus, execution quality, and organizational alignment.\n\nThis model explores how leadership priorities shift as organizations grow and the tradeoffs that emerge along the way.",
-    guidance: {
-      lens: "Business growth stretches scope and pace together—the leadership problem is keeping focus and execution quality from thinning out.",
-      benefits: [
-        "Faster response to market and customer expansion opportunities",
-        "A broader story for sales and stakeholders when ambition is intentional",
-      ],
-      costs: [
-        "Focus diluting as surface area and delivery pressure rise together",
-        "Execution quality thinning when every segment feels urgent",
-      ],
-      organizationalEffects: [
-        "Teams chase breadth while shared standards quietly erode",
-        "Leaders confuse growth activity with durable customer outcomes",
-      ],
-      question:
-        "If we stopped expanding for one quarter, which customers would we serve better?",
-    },
-    tint: "forest",
-    inputs: {
-      scope: 62,
-      deliverySpeed: 82,
-      qualityBar: 58,
-      teamSize: 48,
-      innovation: 30,
-    },
-  },
-  {
-    id: "regulatedEnterprise",
-    slug: "regulated-enterprise",
-    label: "Operating in a Regulated Environment",
-    blurb:
-      "Balancing compliance, governance, and risk management while preserving speed, innovation, and customer responsiveness.",
-    explanation:
-      "Compliance and risk management protect trust—but they also compress experimentation. The hard part is preserving enough speed and customer responsiveness that governance does not become the product. Leaders struggle to distinguish necessary control from habitual friction.\n\nThis model explores how quality, predictability, and innovation trade off when regulation is a real constraint.",
-    guidance: {
-      lens: "In regulated environments, quality and predictability are constraints—the challenge is keeping governance from becoming the product.",
-      benefits: [
-        "Stronger trust through deliberate quality, compliance, and risk posture",
-        "More durable predictability when governance is treated as a design input",
-      ],
-      costs: [
-        "Slower experimentation when every change carries approval weight",
-        "Innovation compressed by processes that protect against worst cases",
-      ],
-      organizationalEffects: [
-        "Teams optimize for auditability before customer learning",
-        "Leaders struggle to distinguish necessary control from habitual friction",
-      ],
-      question:
-        "Which controls protect customers — and which ones mostly protect the organization from itself?",
-    },
-    tint: "slate",
-    inputs: {
-      scope: 55,
-      deliverySpeed: 32,
-      qualityBar: 88,
-      teamSize: 65,
-      innovation: 35,
+      deliverySpeed: 74,
+      qualityBar: 36,
+      teamSize: 28,
+      innovation: 92,
     },
   },
 ];
@@ -478,45 +572,53 @@ export const PRESETS: Preset[] = [
 export const PRINCIPLES: Principle[] = [
   {
     id: "iron-triangle",
-    title: "The Iron Triangle",
-    summary:
-      "You cannot maximize scope, speed, and quality simultaneously.",
-    detail:
-      "Every serious product decision chooses which corner to protect. Pretending otherwise usually means quality erodes quietly while timelines slip and teams burn out.",
+    title: "Iron Triangle",
+    core: "You cannot maximize scope, speed, and quality at the same time.",
+    practicalExample:
+      "A team promises every feature, an aggressive deadline, and exceptional quality. As release day approaches, something has to give. The team either cuts features, delays the launch, or ships with more defects than planned.",
+    whyItMatters:
+      "Every leadership challenge in this model eventually forces you to decide which constraint you're willing to protect.",
     tint: "slate",
   },
   {
     id: "brooks-law",
     title: "Brooks's Law",
-    summary: "Adding people to a late project often makes it later.",
-    detail:
-      "New teammates bring ramp-up cost, communication paths, and coordination tax. Capacity helps — but late in a constrained delivery, more people can slow the system.",
+    core: "Adding people to a late project often makes it later.",
+    practicalExample:
+      "A release is slipping, so leadership adds two more engineers. The existing team spends weeks onboarding them, answering questions, and re-splitting the work. The deadline moves further out—not closer.",
+    whyItMatters:
+      "Organization Size in this model isn't free capacity—past a point it raises coordination cost and can slow delivery.",
     tint: "bronze",
+  },
+  {
+    id: "conways-law",
+    title: "Conway's Law",
+    core: "Your product's shape will mirror how your teams communicate.",
+    practicalExample:
+      "Three teams own three parts of the same customer journey. Each ships on their own timeline with their own priorities. Customers feel the seams—inconsistent UX, awkward handoffs, and features that never quite connect.",
+    whyItMatters:
+      "When you change Organization Size or how work is structured, you're also shaping how the product itself will fit together.",
+    tint: "teal",
+  },
+  {
+    id: "goodharts-law",
+    title: "Goodhart's Law",
+    core: "When a measure becomes a target, it stops being a useful measure.",
+    practicalExample:
+      "Leadership tracks story points completed each sprint. Teams start optimizing for points instead of outcomes—splitting work into smaller tickets, avoiding hard problems, and reporting strong velocity while customer value stalls.",
+    whyItMatters:
+      "The outcomes in this model are signals to interpret, not targets to hit—optimizing one gauge in isolation usually distorts the others.",
+    tint: "forest",
   },
   {
     id: "technical-debt",
     title: "Technical Debt",
-    summary: "Speed today can reduce velocity tomorrow.",
-    detail:
-      "Aggressive timelines create shortcuts. Some debt is intentional. Unmanaged debt becomes a tax on every future release and quietly rewrites the roadmap.",
+    core: "Speed today can reduce velocity tomorrow.",
+    practicalExample:
+      "To hit a launch date, the team skips tests, hard-codes edge cases, and leaves \"temporary\" workarounds. Six months later, every feature takes twice as long because nobody wants to touch the fragile parts.",
+    whyItMatters:
+      "Delivery Speed and Product Quality trade against each other here—debt is the quiet cost of choosing speed without a plan to pay it back.",
     tint: "rust",
-  },
-  {
-    id: "product-market-fit",
-    title: "Product-Market Fit",
-    summary: "Innovation increases opportunity but also uncertainty.",
-    detail:
-      "Experimental bets expand the possibility space. They also weaken confidence until learning loops produce evidence. Novelty without feedback is just risk.",
-    tint: "teal",
-  },
-  {
-    id: "outcome-thinking",
-    title: "Outcome Thinking",
-    summary:
-      "Features matter only if they improve customer outcomes.",
-    detail:
-      "Scope is not value. Shipping more does not automatically create satisfaction. Product leadership keeps the work tethered to outcomes, not output volume.",
-    tint: "forest",
   },
 ];
 
@@ -768,7 +870,7 @@ export function getReflection(
   if (scope > 65) {
     costs.push({
       weight: scope,
-      text: "Broader scope raising complexity and integration risk",
+      text: "Comprehensive product scope raising complexity and integration risk",
     });
   }
   if (innovation > 70) {
@@ -853,7 +955,7 @@ export function getReflection(
   if (teamSize < 35 && scope > 60) {
     effects.push({
       weight: 91,
-      text: "A small team carrying broad ambition — overload is a design risk",
+      text: "A small organization carrying ambitious product scope — overload is a design risk",
     });
   }
   if (outputs.strategicConfidence < 45 && innovation > 60) {
@@ -918,10 +1020,15 @@ export function getReflection(
     });
   }
 
+  // Challenge mode stays brief — one principle, a few reinforcing lines.
+  const benefitLimit = activeChallenge ? 2 : 4;
+  const costLimit = activeChallenge ? 2 : 4;
+  const effectLimit = activeChallenge ? 2 : 3;
+
   return {
-    benefits: topItems(benefits, 4),
-    costs: topItems(costs, 4),
-    organizationalEffects: topItems(effects, 3),
+    benefits: topItems(benefits, benefitLimit),
+    costs: topItems(costs, costLimit),
+    organizationalEffects: topItems(effects, effectLimit),
     question: topItems(questions, 1)[0],
     ...(activeChallenge
       ? {
@@ -955,6 +1062,101 @@ export function getPresetBySlug(slug: string): Preset | undefined {
 
 export function getPresetByEssayId(essayId: string): Preset | undefined {
   return PRESETS.find((preset) => preset.relatedEssayId === essayId);
+}
+
+/** Understanding-panel copy — challenge overrides when present. */
+export function getSliderContext(
+  sliderId: SliderId,
+  challengeId?: PresetId | null,
+): SliderContext {
+  const base =
+    SLIDER_DEFINITIONS.find((slider) => slider.id === sliderId)?.context ??
+    SLIDER_DEFINITIONS[0].context;
+  if (!challengeId) return base;
+  const override = getPresetById(challengeId)?.sliderInsights?.[sliderId];
+  return override ?? base;
+}
+
+/** Outside this band, a slider counts as a meaningful leadership decision. */
+const MEANINGFUL_LOW = 30;
+const MEANINGFUL_HIGH = 70;
+
+/** Qualitative fragments for endpoint-leaning slider positions. */
+const DECISION_FRAGMENTS: Record<
+  SliderId,
+  { low: string; high: string }
+> = {
+  scope: { low: "focused scope", high: "comprehensive scope" },
+  deliverySpeed: { low: "measured delivery", high: "aggressive delivery" },
+  qualityBar: { low: "functional quality", high: "exceptional quality" },
+  teamSize: { low: "a small team", high: "a large organization" },
+  innovation: {
+    low: "incremental innovation",
+    high: "transformational innovation",
+  },
+};
+
+/**
+ * Short editorial sentence explaining why the Tradeoffs column looks the
+ * way it does — challenge label plus up to three endpoint-leaning decisions.
+ * Explanatory only; does not affect weighting or reflection content.
+ */
+export function getTradeoffDecisionSummary(
+  challenge: Preset | null | undefined,
+  inputs: SliderInputs,
+): string {
+  const meaningful = SLIDER_DEFINITIONS.flatMap((slider) => {
+    const value = inputs[slider.id];
+    if (value > MEANINGFUL_LOW && value < MEANINGFUL_HIGH) return [];
+    const fragment =
+      value <= MEANINGFUL_LOW
+        ? DECISION_FRAGMENTS[slider.id].low
+        : DECISION_FRAGMENTS[slider.id].high;
+    return [
+      {
+        id: slider.id,
+        fragment,
+        deviation: Math.abs(value - 50),
+      },
+    ];
+  });
+
+  const emphasized = challenge?.emphasizedSliders;
+  meaningful.sort((a, b) => {
+    if (emphasized?.length) {
+      const aIdx = emphasized.indexOf(a.id);
+      const bIdx = emphasized.indexOf(b.id);
+      const aRank = aIdx === -1 ? Number.POSITIVE_INFINITY : aIdx;
+      const bRank = bIdx === -1 ? Number.POSITIVE_INFINITY : bIdx;
+      if (aRank !== bRank) return aRank - bRank;
+    }
+    return b.deviation - a.deviation;
+  });
+
+  const decisions = meaningful.slice(0, 3).map((item) => item.fragment);
+  const label = challenge?.label;
+
+  if (decisions.length === 0) {
+    return label
+      ? `These tradeoffs reflect your current ${label} decisions.`
+      : "These tradeoffs reflect your current decisions.";
+  }
+
+  if (decisions.length === 1) {
+    return label
+      ? `These tradeoffs reflect ${label} with ${decisions[0]}.`
+      : `These tradeoffs reflect ${decisions[0]}.`;
+  }
+
+  if (decisions.length === 2) {
+    return label
+      ? `These tradeoffs reflect ${label} with ${decisions[0]} and ${decisions[1]}.`
+      : `These tradeoffs reflect ${decisions[0]} and ${decisions[1]}.`;
+  }
+
+  return label
+    ? `These tradeoffs reflect ${label} with ${decisions[0]}, ${decisions[1]}, and ${decisions[2]}.`
+    : `These tradeoffs reflect ${decisions[0]}, ${decisions[1]}, and ${decisions[2]}.`;
 }
 
 /** Build a shareable homepage URL for a leadership challenge (`?scenario=` kept for stable links). */

@@ -1,4 +1,4 @@
-/** Editorial abstract heroes for writing cards — shared language with the Tradeoff Engine. */
+/** Editorial abstract heroes for writing cards — shared language with the Tradeoff Model. */
 
 type IllustrationProps = {
   className?: string;

@@ -95,27 +95,9 @@ export function Hero() {
               {site.hero.supporting}
             </motion.p>
 
-            <motion.div
-              {...fadeUp(0.24)}
-              className="mt-12 flex flex-wrap items-center gap-3"
-            >
-              <a
-                href="#tradeoffs"
-                className="inline-flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity duration-300 ease-out hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                Explore the mental model
-              </a>
-              <a
-                href="#writing"
-                className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background-elevated px-5 text-sm font-medium text-foreground shadow-soft transition-[border-color,background-color,color] duration-300 ease-out hover:border-accent/35 hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                Read the writing
-              </a>
-            </motion.div>
-
-            {/* Tighter CTA→subtext gap; slightly stronger muted so it stays readable but secondary. */}
+            {/* Slightly stronger muted so it stays readable but secondary. */}
             <motion.p
-              {...fadeUp(0.3)}
+              {...fadeUp(0.24)}
               className="mt-3 max-w-xl text-sm leading-relaxed text-muted/85 sm:mt-4"
             >
               {site.hero.credibility}

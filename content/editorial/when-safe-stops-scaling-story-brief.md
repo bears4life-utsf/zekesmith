@@ -435,9 +435,9 @@ Owns:
 | Empowered team mechanics | Sketch only | Primary |
 | Metrics proving POM “works” | Early throughput + survey contrast | Deeper outcome system design |
 | Safe-lite / relapse | Primary warning | “How to prevent” playbook |
-| Tradeoff Engine scenario | `enterprise-coordination` | `empowered-product-teams` |
+| Tradeoff Model scenario | `managing-dependencies` | `managing-growth` |
 
-Cross-link both essays to the Product Tradeoff Engine scenarios, but do not duplicate the argument.
+Cross-link both essays to the Product Tradeoff Model scenarios, but do not duplicate the argument.
 
 ---
 
@@ -547,6 +547,6 @@ Do **not** outline yet.
 
 ## Companion Hooks (for later production)
 
-- Tradeoff Engine scenario: `/?scenario=enterprise-coordination#tradeoffs`
-- Related essay (future): *The Product Operating Model Actually Works* → `empowered-product-teams`
+- Tradeoff Model scenario: `/?scenario=managing-dependencies#tradeoffs`
+- Related essay (future): *The Product Operating Model Actually Works* → `managing-growth`
 - Series frame: Essay 1 = recognition; Essay 2 = replacement.
