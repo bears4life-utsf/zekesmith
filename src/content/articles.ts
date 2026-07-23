@@ -8,7 +8,7 @@ export type Article = {
   category: string;
   accent: string;
   illustration: ArticleIllustration;
-  /** Tradeoff Engine scenario slug — deep-links into a predefined mental model. */
+  /** Tradeoff Engine challenge slug — deep-links into a predefined mental model. */
   relatedScenarioSlug: string;
   relatedConcepts: readonly string[];
   status: "draft" | "published";

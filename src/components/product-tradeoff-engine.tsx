@@ -196,13 +196,18 @@ export function ProductTradeoffEngine() {
           <div className="mt-10 rounded-3xl border border-accent/20 bg-background-elevated p-5 shadow-soft sm:mt-12 sm:p-7 lg:p-8">
             <div className="space-y-6 sm:space-y-7">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                  Leadership scenarios
+                <h3 className="max-w-3xl text-pretty font-serif text-xl tracking-tight text-foreground sm:text-[1.35rem] sm:leading-snug">
+                  What kind of leadership problem are you trying to solve?
+                </h3>
+                <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-muted sm:text-[0.95rem] sm:leading-relaxed">
+                  Select the challenge that best reflects your organization.
+                  We&apos;ll adapt the guidance to help you balance customer
+                  outcomes, coordination, and decision-making.
                 </p>
                 <div
-                  className="mt-3.5 flex flex-wrap gap-2"
+                  className="mt-5 flex flex-wrap gap-2"
                   role="group"
-                  aria-label="Leadership scenarios"
+                  aria-label="Leadership challenges"
                 >
                   {PRESETS.map((preset) => {
                     const selected = activePreset === preset.id;
@@ -251,8 +256,8 @@ export function ProductTradeoffEngine() {
                       exit={enableMotion ? { opacity: 0 } : undefined}
                       className="mt-5 text-sm leading-relaxed text-muted/75"
                     >
-                      Adjust the decisions below — or start from a scenario that
-                      resembles an organization you know.
+                      Adjust the decisions below — or start from a challenge
+                      that reflects the problem you&apos;re facing.
                     </motion.p>
                   )}
                 </AnimatePresence>
