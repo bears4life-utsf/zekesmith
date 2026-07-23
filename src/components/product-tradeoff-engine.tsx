@@ -6,10 +6,9 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
 import type { CSSProperties } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   DEFAULT_INPUTS,
   PRESETS,
@@ -27,14 +26,7 @@ import {
   type SliderInputs,
 } from "@/lib/productTradeoffEngine";
 import { SectionHeading } from "@/components/section-heading";
-
-function useIsClient() {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-}
+import { useEnableMotion } from "@/lib/motion";
 
 function readScenarioInputsFromUrl(): SliderInputs | null {
   if (typeof window === "undefined") return null;
@@ -64,9 +56,7 @@ function syncScenarioToUrl(presetId: PresetId | null) {
 }
 
 export function ProductTradeoffEngine() {
-  const isClient = useIsClient();
-  const reduceMotion = useReducedMotion();
-  const enableMotion = isClient && reduceMotion !== true;
+  const enableMotion = useEnableMotion();
   const principlesTitleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const didHydrateUrl = useRef(false);
@@ -144,7 +134,7 @@ export function ProductTradeoffEngine() {
       <div className="border-b border-t border-border bg-[color-mix(in_srgb,var(--background-elevated)_62%,var(--background))]">
         <div className="mx-auto w-full max-w-6xl px-5 pb-16 pt-10 sm:px-8 sm:pb-20 sm:pt-12 lg:pt-14">
           <motion.div
-            initial={enableMotion ? { opacity: 0, y: 12 } : false}
+            initial={enableMotion ? { opacity: 1, y: 12 } : false}
             whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -235,9 +225,9 @@ export function ProductTradeoffEngine() {
                   {activePresetMeta ? (
                     <motion.div
                       key={activePresetMeta.id}
-                      initial={enableMotion ? { opacity: 0, y: 6 } : false}
+                      initial={enableMotion ? { opacity: 1, y: 6 } : false}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={enableMotion ? { opacity: 0, y: -4 } : undefined}
+                      exit={enableMotion ? { opacity: 1, y: -4 } : undefined}
                       transition={{ duration: 0.28 }}
                       className="mt-5 max-w-3xl border-l-2 border-accent/35 pl-4 sm:pl-5"
                     >
@@ -251,9 +241,9 @@ export function ProductTradeoffEngine() {
                   ) : (
                     <motion.p
                       key="custom"
-                      initial={enableMotion ? { opacity: 0 } : false}
+                      initial={enableMotion ? { opacity: 1 } : false}
                       animate={{ opacity: 1 }}
-                      exit={enableMotion ? { opacity: 0 } : undefined}
+                      exit={enableMotion ? { opacity: 1 } : undefined}
                       className="mt-5 text-sm leading-relaxed text-muted/75"
                     >
                       Adjust the decisions below — or start from a challenge
@@ -308,6 +298,15 @@ export function ProductTradeoffEngine() {
                                   Number(event.target.value),
                                 )
                               }
+                              onInput={(event) =>
+                                updateSlider(
+                                  slider.id,
+                                  Number(
+                                    (event.target as HTMLInputElement).value,
+                                  ),
+                                )
+                              }
+                              onPointerDown={() => setActiveSliderId(slider.id)}
                               onFocus={() => setActiveSliderId(slider.id)}
                               className="tradeoff-slider mt-3 w-full"
                               aria-valuemin={0}
@@ -328,9 +327,9 @@ export function ProductTradeoffEngine() {
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeSlider.id}
-                        initial={enableMotion ? { opacity: 0, y: 4 } : false}
+                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={enableMotion ? { opacity: 0, y: -3 } : undefined}
+                        exit={enableMotion ? { opacity: 1, y: -3 } : undefined}
                         transition={{ duration: 0.25 }}
                         className="mt-4 space-y-5"
                       >
@@ -424,9 +423,9 @@ export function ProductTradeoffEngine() {
                     <AnimatePresence mode="wait">
                       <motion.p
                         key={reflection.question}
-                        initial={enableMotion ? { opacity: 0, y: 4 } : false}
+                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={enableMotion ? { opacity: 0, y: -3 } : undefined}
+                        exit={enableMotion ? { opacity: 1, y: -3 } : undefined}
                         transition={{ duration: 0.28 }}
                         className="mt-4 text-pretty font-serif text-lg leading-[1.55] tracking-tight text-foreground sm:mt-5 sm:text-xl sm:leading-[1.5]"
                       >
@@ -591,9 +590,9 @@ function ReflectionPanel({
             <motion.li
               key={item}
               layout={enableMotion}
-              initial={enableMotion ? { opacity: 0, y: 4 } : false}
+              initial={enableMotion ? { opacity: 1, y: 4 } : false}
               animate={{ opacity: 1, y: 0 }}
-              exit={enableMotion ? { opacity: 0 } : undefined}
+              exit={enableMotion ? { opacity: 1 } : undefined}
               transition={{ duration: 0.22 }}
               className="flex gap-2.5 text-sm leading-relaxed text-foreground"
             >

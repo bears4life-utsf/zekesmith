@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Project } from "@/content/projects";
+import { useEnableMotion } from "@/lib/motion";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
   const isLive = project.status === "live" && Boolean(project.url);
 
   const card = (
@@ -60,8 +61,8 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 
   return (
     <motion.article
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      initial={enableMotion ? { opacity: 1, y: 14 } : false}
+      whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.45, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
     >

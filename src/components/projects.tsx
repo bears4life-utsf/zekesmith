@@ -1,12 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { projects } from "@/content/projects";
 import { ProjectCard } from "@/components/project-card";
 import { site } from "@/content/site";
+import { useEnableMotion } from "@/lib/motion";
 
 export function Projects() {
-  const reduceMotion = useReducedMotion();
+  const enableMotion = useEnableMotion();
 
   return (
     <section
@@ -16,8 +17,8 @@ export function Projects() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pb-28 sm:pt-10">
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          initial={enableMotion ? { opacity: 1, y: 12 } : false}
+          whileInView={enableMotion ? { opacity: 1, y: 0 } : undefined}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"
