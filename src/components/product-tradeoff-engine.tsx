@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  startTransition,
   useEffect,
   useId,
   useMemo,
@@ -28,7 +29,7 @@ import {
 import { SectionHeading } from "@/components/section-heading";
 import { useEnableMotion } from "@/lib/motion";
 
-function readScenarioInputsFromUrl(): SliderInputs | null {
+function readChallengeInputsFromUrl(): SliderInputs | null {
   if (typeof window === "undefined") return null;
   const slug = new URLSearchParams(window.location.search).get(
     SCENARIO_QUERY_PARAM,
@@ -37,7 +38,7 @@ function readScenarioInputsFromUrl(): SliderInputs | null {
   return getPresetBySlug(slug)?.inputs ?? null;
 }
 
-function syncScenarioToUrl(presetId: PresetId | null) {
+function syncChallengeToUrl(presetId: PresetId | null) {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
   if (presetId) {
@@ -59,9 +60,9 @@ export function ProductTradeoffEngine() {
   const enableMotion = useEnableMotion();
   const principlesTitleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const didHydrateUrl = useRef(false);
 
   const [inputs, setInputs] = useState<SliderInputs>(DEFAULT_INPUTS);
+  const [urlHydrated, setUrlHydrated] = useState(false);
   const [activeSliderId, setActiveSliderId] =
     useState<SliderId>("deliverySpeed");
   const [principlesOpen, setPrinciplesOpen] = useState(false);
@@ -84,20 +85,25 @@ export function ProductTradeoffEngine() {
   );
 
   useEffect(() => {
-    const fromUrl = readScenarioInputsFromUrl();
-    if (fromUrl) setInputs(fromUrl);
-    didHydrateUrl.current = true;
+    const fromUrl = readChallengeInputsFromUrl();
+    startTransition(() => {
+      if (fromUrl) setInputs(fromUrl);
+      setUrlHydrated(true);
+    });
   }, []);
 
   useEffect(() => {
-    if (!didHydrateUrl.current) return;
-    syncScenarioToUrl(activePreset);
-  }, [activePreset]);
+    if (!urlHydrated) return;
+    syncChallengeToUrl(activePreset);
+  }, [activePreset, urlHydrated]);
 
   useEffect(() => {
     function onPopState() {
-      const fromUrl = readScenarioInputsFromUrl();
-      if (fromUrl) setInputs(fromUrl);
+      const fromUrl = readChallengeInputsFromUrl();
+      if (!fromUrl) return;
+      startTransition(() => {
+        setInputs(fromUrl);
+      });
     }
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -116,7 +122,17 @@ export function ProductTradeoffEngine() {
 
   function updateSlider(id: SliderId, value: number) {
     setActiveSliderId(id);
-    setInputs((prev) => ({ ...prev, [id]: value }));
+    setInputs((prev) => {
+      if (prev[id] === value) return prev;
+      return { ...prev, [id]: value };
+    });
+  }
+
+  function handleSliderValue(
+    id: SliderId,
+    raw: string | number,
+  ) {
+    updateSlider(id, Number(raw));
   }
 
   function applyPreset(id: PresetId) {
@@ -195,7 +211,7 @@ export function ProductTradeoffEngine() {
                   outcomes, coordination, and decision-making.
                 </p>
                 <div
-                  className="mt-5 flex flex-wrap gap-2"
+                  className="mt-5 flex flex-wrap gap-2 sm:gap-2.5"
                   role="group"
                   aria-label="Leadership challenges"
                 >
@@ -207,8 +223,9 @@ export function ProductTradeoffEngine() {
                         type="button"
                         onClick={() => applyPreset(preset.id)}
                         title={preset.blurb}
+                        aria-pressed={selected}
                         data-selected={selected}
-                        className="preset-chip rounded-full border px-3.5 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                        className="preset-chip rounded-full border px-3.5 py-2 text-[0.8125rem] leading-snug sm:px-4 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                         style={
                           {
                             "--preset-tint": PRESET_TINT_VAR[preset.tint],
@@ -231,7 +248,10 @@ export function ProductTradeoffEngine() {
                       transition={{ duration: 0.28 }}
                       className="mt-5 max-w-3xl border-l-2 border-accent/35 pl-4 sm:pl-5"
                     >
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent/85">
+                        Active challenge
+                      </p>
+                      <p className="mt-1.5 text-sm font-medium text-foreground">
                         {activePresetMeta.label}
                       </p>
                       <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -293,20 +313,20 @@ export function ProductTradeoffEngine() {
                               step={1}
                               value={inputs[slider.id]}
                               onChange={(event) =>
-                                updateSlider(
+                                handleSliderValue(
                                   slider.id,
-                                  Number(event.target.value),
+                                  event.target.value,
                                 )
                               }
                               onInput={(event) =>
-                                updateSlider(
+                                handleSliderValue(
                                   slider.id,
-                                  Number(
-                                    (event.target as HTMLInputElement).value,
-                                  ),
+                                  (event.target as HTMLInputElement).value,
                                 )
                               }
-                              onPointerDown={() => setActiveSliderId(slider.id)}
+                              onPointerDown={() =>
+                                setActiveSliderId(slider.id)
+                              }
                               onFocus={() => setActiveSliderId(slider.id)}
                               className="tradeoff-slider mt-3 w-full"
                               aria-valuemin={0}
@@ -397,6 +417,26 @@ export function ProductTradeoffEngine() {
                 </div>
 
                 <div className="space-y-4" aria-live="polite">
+                  <AnimatePresence mode="wait">
+                    {reflection.challengeLens ? (
+                      <motion.div
+                        key={`lens-${reflection.challengeLabel}`}
+                        initial={enableMotion ? { opacity: 1, y: 4 } : false}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={enableMotion ? { opacity: 1 } : undefined}
+                        transition={{ duration: 0.25 }}
+                        className="rounded-2xl border border-accent/25 bg-[color-mix(in_srgb,var(--accent)_6%,var(--background-elevated))] px-5 py-4 sm:px-6"
+                      >
+                        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-accent">
+                          Guidance for {reflection.challengeLabel}
+                        </p>
+                        <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                          {reflection.challengeLens}
+                        </p>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+
                   <ReflectionPanel
                     label="Potential Benefits"
                     tone="calm"
@@ -589,11 +629,10 @@ function ReflectionPanel({
           {items.map((item) => (
             <motion.li
               key={item}
-              layout={enableMotion}
               initial={enableMotion ? { opacity: 1, y: 4 } : false}
               animate={{ opacity: 1, y: 0 }}
               exit={enableMotion ? { opacity: 1 } : undefined}
-              transition={{ duration: 0.22 }}
+              transition={{ duration: 0.2 }}
               className="flex gap-2.5 text-sm leading-relaxed text-foreground"
             >
               <span
