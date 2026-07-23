@@ -404,7 +404,7 @@ body {
   transform: translateY(0.5px);
 }
 
-/* Article → Tradeoff Engine vocabulary chips (non-interactive for now). */
+/* Article → Tradeoff Model vocabulary chips (non-interactive for now). */
 .related-concept-chip {
   display: inline-flex;
   align-items: center;

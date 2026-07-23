@@ -17,17 +17,17 @@ export const site = {
       roles: "VP of Product · Builder · Writer",
     },
     headline:
-      "Exploring AI, product strategy, and the tradeoffs that shape software.",
+      "Exploring the decisions that shape software organizations.",
     supporting:
       "After nearly three decades leading software teams, I still spend my time thinking about the same questions: How do products succeed? Which tradeoffs matter? And how is AI changing the way software gets built?",
     credibility:
-      "Product systems • AI experiments • Exploring how software gets made",
+      "Product Systems • Leadership Tradeoffs • AI Experiments",
     exploring: {
       title: "Questions I'm Exploring",
       items: [
         {
           label: "How do product tradeoffs shape software?",
-          href: "/?scenario=empowered-product-teams#tradeoffs",
+          href: "/?scenario=managing-growth#tradeoffs",
         },
         {
           label: "How is AI changing software development?",

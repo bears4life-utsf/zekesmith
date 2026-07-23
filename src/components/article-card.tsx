@@ -72,7 +72,7 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
             }}
             className="related-concept-chip mt-2.5 inline-flex transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            Open in the Tradeoff Engine
+            Open in the Tradeoff Model
           </a>
           <ul className="mt-3 flex flex-wrap gap-1.5">
             {article.relatedConcepts.map((concept) => (
