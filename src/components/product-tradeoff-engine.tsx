@@ -3,17 +3,13 @@
 import {
   startTransition,
   useEffect,
-  useId,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   DEFAULT_INPUTS,
   PRESETS,
-  PRINCIPLES,
-  PRINCIPLE_TINT_VAR,
   SCENARIO_QUERY_PARAM,
   SLIDER_DEFINITIONS,
   computeOutputs,
@@ -25,6 +21,7 @@ import {
   type SliderId,
   type SliderInputs,
 } from "@/lib/productTradeoffEngine";
+import { ContinueExploring } from "@/components/continue-exploring";
 import { SectionHeading } from "@/components/section-heading";
 import { useEnableMotion } from "@/lib/motion";
 
@@ -72,8 +69,6 @@ function readChallengeIdFromUrl(): PresetId | null {
 
 export function ProductTradeoffEngine() {
   const enableMotion = useEnableMotion();
-  const principlesTitleId = useId();
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const [inputs, setInputs] = useState<SliderInputs>(DEFAULT_INPUTS);
   const [selectedChallengeId, setSelectedChallengeId] =
@@ -81,7 +76,6 @@ export function ProductTradeoffEngine() {
   const [urlHydrated, setUrlHydrated] = useState(false);
   const [activeSliderId, setActiveSliderId] =
     useState<SliderId>("deliverySpeed");
-  const [principlesOpen, setPrinciplesOpen] = useState(false);
 
   const outputs = useMemo(() => computeOutputs(inputs), [inputs]);
   const reflection = useMemo(
@@ -137,17 +131,6 @@ export function ProductTradeoffEngine() {
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    if (principlesOpen) {
-      if (!dialog.open) dialog.showModal();
-    } else if (dialog.open) {
-      dialog.close();
-    }
-  }, [principlesOpen]);
 
   function updateSlider(id: SliderId, value: number) {
     setActiveSliderId(id);
@@ -379,7 +362,7 @@ export function ProductTradeoffEngine() {
 
                       {/* Interpretation — teaching the selected decision */}
                       <div className="mt-10 border-t border-border/35 pt-8 sm:mt-12 sm:pt-9">
-                        <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-muted/80">
+                        <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-muted">
                           Understanding {activeSlider.label}
                         </p>
                         <AnimatePresence mode="wait">
@@ -509,155 +492,13 @@ export function ProductTradeoffEngine() {
                     </div>
                   </div>
 
-                  {/* Closing beat — principles link */}
-                  <div className="mt-7 border-t border-border/35 pt-6 sm:mt-8 sm:pt-7">
-                    <button
-                      type="button"
-                      onClick={() => setPrinciplesOpen(true)}
-                      className="group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                    >
-                      View the ideas behind the model
-                      <span
-                        aria-hidden
-                        className="transition-transform duration-300 group-hover:translate-x-0.5"
-                      >
-                        →
-                      </span>
-                    </button>
-                  </div>
+                  <ContinueExploring />
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="mt-10 max-w-3xl sm:mt-12">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-              Related essays
-            </p>
-            <ul className="mt-6 space-y-8 sm:mt-7 sm:space-y-9">
-              <li>
-                <a
-                  href="#beyond-safe"
-                  className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                >
-                  <h3 className="font-serif text-xl tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-[1.35rem]">
-                    When SAFe Stops Scaling
-                  </h3>
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
-                    How coordination gradually became more expensive than the
-                    value it created.
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm text-accent">
-                    Read Essay
-                    <span
-                      aria-hidden
-                      className="transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#product-operating-model"
-                  className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                >
-                  <h3 className="font-serif text-xl tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-[1.35rem]">
-                    The product operating model actually works
-                  </h3>
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
-                    Why empowered teams change the way organizations make
-                    decisions.
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm text-accent">
-                    Read Essay
-                    <span
-                      aria-hidden
-                      className="transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
-
-      <dialog
-        ref={dialogRef}
-        aria-labelledby={principlesTitleId}
-        className="fixed left-1/2 top-1/2 z-[80] m-0 w-[min(34rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-background-elevated p-0 text-foreground shadow-hover backdrop:bg-foreground/25 open:flex open:flex-col"
-        onClose={() => setPrinciplesOpen(false)}
-        onClick={(event) => {
-          if (event.target === dialogRef.current) setPrinciplesOpen(false);
-        }}
-      >
-        <div className="max-h-[min(70vh,36rem)] overflow-y-auto p-6 sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-accent">
-                Supporting ideas
-              </p>
-              <h3
-                id={principlesTitleId}
-                className="mt-2 font-serif text-2xl tracking-tight text-foreground"
-              >
-                Ideas behind the model
-              </h3>
-            </div>
-            <button
-              type="button"
-              onClick={() => setPrinciplesOpen(false)}
-              className="rounded-full border border-border px-3 py-1 text-sm text-muted transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              Close
-            </button>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-muted">
-            These are enduring ideas from software engineering, product
-            management, and organizational design. They don&apos;t provide
-            answers—they help explain why the tradeoffs in this model exist.
-          </p>
-
-          <ul className="mt-8 space-y-8">
-            {PRINCIPLES.map((principle) => {
-              const tint = PRINCIPLE_TINT_VAR[principle.tint];
-              return (
-                <li key={principle.id} className="flex gap-3">
-                  <span
-                    aria-hidden
-                    className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-                    style={{ background: tint }}
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {principle.title}
-                    </p>
-                    <p className="mt-1 text-sm leading-snug text-foreground/90">
-                      {principle.core}
-                    </p>
-                    <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-muted">
-                      Practical example
-                    </p>
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                      {principle.practicalExample}
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed text-muted">
-                      <span className="font-medium text-foreground/80">
-                        Why it matters:
-                      </span>{" "}
-                      {principle.whyItMatters}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </dialog>
     </section>
   );
 }

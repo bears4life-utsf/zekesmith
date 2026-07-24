@@ -301,7 +301,7 @@ export const PRESETS: Preset[] = [
       },
     },
     tint: "burgundy",
-    relatedEssayId: "product-operating-model",
+    relatedEssayId: "the-product-operating-model-actually-works",
     inputs: {
       scope: 68,
       deliverySpeed: 58,
@@ -366,7 +366,7 @@ export const PRESETS: Preset[] = [
       },
     },
     tint: "navy",
-    relatedEssayId: "beyond-safe",
+    relatedEssayId: "when-safe-stops-scaling",
     inputs: {
       scope: 78,
       deliverySpeed: 30,
