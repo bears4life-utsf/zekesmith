@@ -6,10 +6,10 @@ export const site = {
   url: "https://zekesmith.dev",
   email: "hello@zekesmith.com",
   nav: [
-    { label: "Tradeoffs", href: "#tradeoffs" },
-    { label: "Writing", href: "#writing" },
-    { label: "Projects", href: "#projects" },
-    { label: "About", href: "#about" },
+    { label: "Tradeoffs", href: "/#tradeoffs" },
+    { label: "Writing", href: "/writing" },
+    { label: "Projects", href: "/#projects" },
+    { label: "About", href: "/#about" },
   ],
   hero: {
     masthead: {
@@ -31,26 +31,29 @@ export const site = {
         },
         {
           label: "How is AI changing software development?",
-          href: "#writing",
+          href: "/writing/ai-doesnt-eliminate-tradeoffs",
         },
         {
           label: "What makes teams effective?",
-          href: "#product-operating-model",
+          href: "/writing/the-product-operating-model-actually-works",
         },
         {
           label: "How should humans and AI collaborate?",
-          href: "#projects",
+          href: "/#projects",
         },
         {
           label: "Why do some products succeed?",
-          href: "#about",
+          href: "/#about",
         },
       ],
     },
   },
   writing: {
-    aside:
-      "A curated notebook — less announcement, more working through the argument.",
+    eyebrow: "Writing",
+    headline:
+      "Essays about the decisions that shape software organizations.",
+    intro:
+      "Thoughts on product leadership, organizational systems, artificial intelligence, and the tradeoffs behind building great software.",
   },
   projects: {
     aside:

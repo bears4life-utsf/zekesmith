@@ -5,21 +5,22 @@ import { motion } from "framer-motion";
 import { site } from "@/content/site";
 import { useEnableMotion } from "@/lib/motion";
 
+function hashFromHref(href: string): string | null {
+  if (!href.includes("#")) return null;
+  return `#${href.slice(href.indexOf("#") + 1).split(/[/?]/)[0]}`;
+}
+
 export function Hero() {
   const enableMotion = useEnableMotion();
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
   useEffect(() => {
-    const ids = site.hero.exploring.items
-      .map((item) => {
-        const hash = item.href.includes("#")
-          ? item.href.slice(item.href.indexOf("#") + 1)
-          : item.href.replace(/^#/, "");
-        return hash.split(/[/?]/)[0];
-      })
-      .filter(Boolean);
-    const elements = ids
-      .map((id) => document.getElementById(id))
+    const hashes = site.hero.exploring.items
+      .map((item) => hashFromHref(item.href))
+      .filter((hash): hash is string => Boolean(hash));
+
+    const elements = hashes
+      .map((hash) => document.getElementById(hash.slice(1)))
       .filter((el): el is HTMLElement => Boolean(el));
 
     if (elements.length === 0) return;
@@ -115,14 +116,14 @@ export function Hero() {
               </p>
               <ul className="mt-5 space-y-1">
                 {site.hero.exploring.items.map((item) => {
-                  const hashHref = item.href.includes("#")
-                    ? `#${item.href.slice(item.href.indexOf("#") + 1)}`
-                    : item.href;
+                  const hashHref = hashFromHref(item.href);
                   return (
                     <li key={item.href}>
                       <a
                         href={item.href}
-                        data-active={activeHref === hashHref}
+                        data-active={
+                          hashHref ? activeHref === hashHref : undefined
+                        }
                         /* Default ~AA body contrast; active adds accent + wash (not color-only). */
                         className="exploring-item block rounded-md px-2 py-1.5 text-sm leading-snug text-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                       >
